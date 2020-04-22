@@ -29,7 +29,9 @@ class Ingres_pyodbc(IngresDialect):
         if not url.host:
             conn_list.append('Server=(local)')
         else:
-            conn_list.append('Server=' + url.host)  # FIXME assumes a vnode - support HostName+ListenAddress and/or @ and port support.
+            #conn_list.append('Server=' + url.host)  # for vnodes only - FIXME look at handling vnodes
+            conn_list.append('HostName=' + url.host)
+            conn_list.append('ListenAddress=' + str(url.port))
             # FIXME port - str(url.port)
             
         if url.username:
