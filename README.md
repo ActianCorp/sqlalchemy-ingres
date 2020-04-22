@@ -32,6 +32,7 @@ Test:
     import sqlalchemy
     print(sqlalchemy.__version__)
     con_str = 'ingres:///demodb'  # local demodb
+    con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
     engine = sqlalchemy.create_engine(con_str)
     connection = engine.connect()
     query = 'SELECT * FROM iidbconstants'
