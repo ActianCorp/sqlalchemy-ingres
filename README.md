@@ -36,7 +36,7 @@ Test:
     engine = sqlalchemy.create_engine(con_str)
     connection = engine.connect()
     query = 'SELECT * FROM iidbconstants'
-    for row in connection.execute(query):
+    for row in connection.execute(sqlalchemy.text(query)):
         print(row)
 
 
