@@ -29,6 +29,7 @@ from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 
 ischema_names = {'ANSIDATE': types.Date,
+           'BIGINT': types.BigInteger,
            'BYTE': types.BINARY,
            'BYTE VARYING': types.BINARY,
            'C': types.TEXT,
@@ -48,7 +49,9 @@ ischema_names = {'ANSIDATE': types.Date,
            'NVARCHAR': types.NVARCHAR,
            #'OBJECT_KEY': types.,
            #'TABLE_KEY':,
+           'SMALLINT': types.SmallInteger,
            'TEXT': types.TEXT,
+           'TINYINT': types.SmallInteger,  # FIXME this is the wrong size but closest - TODO look at get_dbapi_type() / setinputsizes()
            'TIME WITH TIME ZONE': types.TIME,
            'TIME WITHOUT TIME ZONE': types.TIME,
            'TIME WITH LOCAL TIME ZONE': types.TIME,
@@ -282,7 +285,6 @@ class IngresDialect(default.DefaultDialect):
                 coltype = row[1].rstrip()
                 coldata['nullable'] = row[2].upper() == 'Y'
                 coldata['default'] = row[3]
-                
                 if coltype == 'C' \
                         or coltype == 'CHAR' \
                         or coltype == 'VARCHAR' \
@@ -291,11 +293,22 @@ class IngresDialect(default.DefaultDialect):
                         or coltype == 'NCHAR' \
                         or coltype == 'BYTE' \
                         or coltype == 'BYTE VARYING' \
-                        or coltype == 'INTEGER' \
                         or coltype == 'FLOAT':
                     length = row[4]
                     coldata['type'] = ischema_names[coltype](length)
-                    
+                elif coltype == 'INTEGER':
+                    length = row[4]
+                    if length == 1:
+                        coltype = 'TINYINT'
+                    elif length == 2:
+                        coltype = 'SMALLINT'
+                    elif length == 4:
+                        pass
+                    elif length == 8:
+                        coltype = 'BIGINT'
+                    else:
+                        pass  # TODO review, unlikely to happen should this be trapped?
+                    coldata['type'] = ischema_names[coltype]
                 elif coltype == 'DECIMAL':
                     (precision, scale) = (row[4], row[5])
                     coldata['type'] = ischema_names[coltype](precision, scale)
