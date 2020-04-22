@@ -6,8 +6,8 @@ Versions
 --------
 
 This dialect was tested against Ingres 9.2.  Some features may not work on earlier versions.
-The driver used during testing was ingresdbi, available from esd.ingres.com.  zxjdbc has been tried
-but not fully tested.
+The driver used during testing was pyodbc and ODBC driver, available from esd.actian.com.
+zxjdbc has been tried but not fully tested.
 
 Connection Strings
 ------------------
@@ -217,6 +217,7 @@ class IngresDDLCompiler(compiler.DDLCompiler):
     
 class IngresExecutionContext(default.DefaultExecutionContext):
     def __init__(self, *args, **kwargs):
+        print((args, kwargs))  # DEBUG clach04
         default.DefaultExecutionContext.__init__(self, *args, **kwargs)
         
     def fire_sequence(self, seq):
@@ -235,7 +236,8 @@ class IngresDialect(default.DefaultDialect):
     ddl_compiler          = IngresDDLCompiler
     execution_ctx_cls     = IngresExecutionContext
     supports_sequences    = True
-    supports_unicode_statements = False
+    supports_unicode_statements = True
+    supports_unicode_binds = True
     supports_empty_insert = False
     postfetch_lastrowid   = False
     requires_name_normalization = True
