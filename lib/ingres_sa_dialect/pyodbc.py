@@ -22,7 +22,6 @@ class Ingres_pyodbc(IngresDialect):
     def create_connect_args(self, url):
         opts = url.translate_connect_args(username='uid', password='pwd', host='vnode')
         driver_name = 'Ingres'  # FIXME should have a connection option for this
-        driver_name = 'Ingres X2'  # FIXME should have a connection option for this
 
         conn_list = []
         conn_list.append('Driver={' + driver_name + '}')  # FIXME using concat for now
