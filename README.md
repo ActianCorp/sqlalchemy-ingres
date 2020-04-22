@@ -1,4 +1,4 @@
-Ingres dialect for SQLAlchemy.
+Ingres dialect for SQLAlchemy https://github.com/sqlalchemy/sqlalchemy.
 
 Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2
 
