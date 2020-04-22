@@ -17,7 +17,13 @@ class Ingres_pyodbc(IngresDialect):
 
     @classmethod
     def dbapi(cls):
-        return __import__('pyodbc')  # FIXME also test pypyodbc
+        try:
+            driver = __import__(Ingres_pyodbc.driver)
+        except ModuleNotFoundError:
+            # fallback to pure Python version
+            Ingres_pyodbc.driver = 'pypyodbc'
+            driver = __import__(Ingres_pyodbc.driver)
+        return driver
 
     def create_connect_args(self, url):
         opts = url.translate_connect_args(username='uid', password='pwd', host='vnode')
