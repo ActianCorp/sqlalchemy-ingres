@@ -6,8 +6,13 @@
 """
 Ingres DB connector for the pyodbc/pypyodbc module
 """
-from ingres_sa_dialect.base import IngresDialect
+
+import os
+
 from sqlalchemy.engine.default import DefaultExecutionContext
+
+from ingres_sa_dialect.base import IngresDialect
+
 
 class Ingres_pyodbc(IngresDialect):
     driver = 'pyodbc'
@@ -27,7 +32,7 @@ class Ingres_pyodbc(IngresDialect):
 
     def create_connect_args(self, url):
         opts = url.translate_connect_args(username='uid', password='pwd', host='vnode')
-        driver_name = 'Ingres'  # FIXME should have a connection option for this
+        driver_name = os.environ.get('SQLALCHEMY_INGRES_ODBC_DRIVER_NAME') or 'Ingres'
 
         conn_list = []
         conn_list.append('Driver={' + driver_name + '}')  # FIXME using concat for now
