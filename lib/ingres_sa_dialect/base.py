@@ -28,6 +28,17 @@ from sqlalchemy.engine import default, reflection
 from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 
+
+# https://docs.actian.com/actianx/11.1/index.html#page/SQLRef/TRANSACTION_ISOLATION_LEVEL.htm
+isolation_lookup = set(
+    [
+        "READ COMMITTED",
+        "READ UNCOMMITTED",
+        "REPEATABLE READ",
+        "SERIALIZABLE",
+    ]
+)
+
 ischema_names = {'ANSIDATE': types.Date,
            'BIGINT': types.BigInteger,
            'BYTE': types.BINARY,
@@ -245,6 +256,7 @@ class IngresDialect(default.DefaultDialect):
     postfetch_lastrowid   = False
     requires_name_normalization = True
     sequences_optional    = False
+    _isolation_lookup = isolation_lookup
     
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
