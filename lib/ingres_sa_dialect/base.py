@@ -186,12 +186,16 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         )
     
     def get_column_default_string(self, column):
+        """
+        import pdb ; pdb.set_trace()
         if isinstance(column.server_default, schema.DefaultClause):
             if isinstance(column.server_default.arg, basestring):
                 return "'%s'" % column.server_default.arg
             else:
                 return unicode(self._compile(column.server_default.arg, None))
         elif isinstance(column.default, schema.Sequence):
+        """
+        if isinstance(column.default, schema.Sequence):
             return 'NEXT VALUE FOR %s' % self.preparer.format_sequence(column.default)
         else:
             return None
