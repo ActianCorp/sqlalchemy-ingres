@@ -257,6 +257,8 @@ class IngresDialect(default.DefaultDialect):
     requires_name_normalization = True
     sequences_optional    = False
     _isolation_lookup = isolation_lookup
+    # TODO get_isolation_level()
+    # TODO _check_max_identifier_length()
     
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
