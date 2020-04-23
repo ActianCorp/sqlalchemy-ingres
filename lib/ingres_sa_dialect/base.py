@@ -235,7 +235,6 @@ class IngresDDLCompiler(compiler.DDLCompiler):
     
 class IngresExecutionContext(default.DefaultExecutionContext):
     def __init__(self, *args, **kwargs):
-        print((args, kwargs))  # DEBUG clach04
         default.DefaultExecutionContext.__init__(self, *args, **kwargs)
         
     def fire_sequence(self, seq, type_):
