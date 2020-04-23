@@ -238,9 +238,10 @@ class IngresExecutionContext(default.DefaultExecutionContext):
         print((args, kwargs))  # DEBUG clach04
         default.DefaultExecutionContext.__init__(self, *args, **kwargs)
         
-    def fire_sequence(self, seq):
+    def fire_sequence(self, seq, type_):
         return self._execute_scalar('SELECT NEXT VALUE FOR %s' \
-                                   % self.dialect.identifier_preparer.format_sequence(seq))
+                                   % self.dialect.identifier_preparer.format_sequence(seq),
+                                   type_)
     
 class IngresDialect(default.DefaultDialect):
     name                  = 'ingres'
