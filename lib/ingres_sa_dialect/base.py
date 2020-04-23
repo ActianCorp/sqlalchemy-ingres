@@ -671,8 +671,10 @@ class IngresDialect(default.DefaultDialect):
         
         rs = None
         try:
+            # TODO consider using exec_driver_sql() instead
             rs = connection.execute(sqltext)
             return rs.fetchone()[0]
         finally:
             if rs:
                 rs.close()
+    _get_default_schema_name = get_default_schema_name  # 1.4 API
