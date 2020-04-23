@@ -146,7 +146,8 @@ class IngresSQLCompiler(compiler.SQLCompiler):
     def visit_sequence(self, seq):
         return 'NEXT VALUE FOR %s' % self.preparer.format_sequence(seq)
     
-    def limit_clause(self, select):
+    def limit_clause(self, select, **kwargs):
+        # NOTE this now silently ignores keyword argument 'literal_binds', 'enclosing_alias', 'include_table', etc.
         text = ""
         
         if not self.is_subquery():
@@ -156,7 +157,9 @@ class IngresSQLCompiler(compiler.SQLCompiler):
                 text += '\nFETCH FIRST %s ROWS ONLY' % select._limit
         return text
     
-    def get_select_precolumns(self, select):
+    def get_select_precolumns(self, select, **kwargs):
+        ## FIXME SA 1.4 code indicates this is going away and being replaced with -- `_expression.Select.prefix_with` should be used for special keywords at the start of a SELECT.
+        # NOTE this now silently ignores keyword argument 'literal_binds', 'enclosing_alias', 'eager_grouping', etc.
         s = ""
         if select._distinct and not self.is_subquery():
             s = " DISTINCT "
