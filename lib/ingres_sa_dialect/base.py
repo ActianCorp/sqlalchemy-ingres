@@ -429,7 +429,7 @@ class IngresDialect(default.DefaultDialect):
                 foreign_keys[name] = constraint
                 
             rs.close()
-            return foreign_keys.values()
+            return list(foreign_keys.values())
         finally:
             if rs:
                 rs.close()
@@ -599,7 +599,7 @@ class IngresDialect(default.DefaultDialect):
                 
                 indexes[name] = index
                 
-            return indexes.values()
+            return list(indexes.values())
         finally:
             if rs:
                 rs.close()
