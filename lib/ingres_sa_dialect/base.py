@@ -415,7 +415,7 @@ class IngresDialect(default.DefaultDialect):
                     constraint['referred_columns'] = []
                     
                     ref_schema = row[2].rstrip()
-                    def_schema = connection.default_schema_name
+                    def_schema = connection.dialect.default_schema_name
                     
                     if def_schema != ref_schema:
                         constraint['referred_schema'] = ref_schema
