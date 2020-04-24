@@ -143,7 +143,8 @@ class IngresTypeCompiler(compiler.GenericTypeCompiler):
         return self.visit_NCLOB(type_)
     
 class IngresSQLCompiler(compiler.SQLCompiler):
-    def visit_sequence(self, seq):
+    def visit_sequence(self, seq, **kwargs):
+        # NOTE this now silently ignores keyword argument 'literal_binds', etc.
         return 'NEXT VALUE FOR %s' % self.preparer.format_sequence(seq)
     
     def limit_clause(self, select, **kwargs):
