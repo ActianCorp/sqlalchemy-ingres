@@ -40,5 +40,16 @@ Test:
         print(row)
 
 
-NOTE Ensure correct ODBC Driver name is "Ingres" and is the same bit-age as the Python interpreter.
+NOTE Default ODBC Driver name used is "Ingres", ensure this is the same bit-age as the Python interpreter.
 For example for 64-bit Python, ensure ODBC Driver called "Ingres" is also 64-bit.
+
+ODBC Driver name can be overridden via environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME`, for example:
+
+
+Windows 64-bit:
+
+    set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Ingres CS
+
+Windows 32-bit:
+
+    set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Ingres CR
