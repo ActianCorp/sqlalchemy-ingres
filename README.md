@@ -34,24 +34,11 @@ Setup for dev use:
     cd ingres_sa_dialect
     pip install -e .
 
-Test:
+Demo/Test:
 
-    import sqlalchemy
-    print(sqlalchemy.__version__)
-    con_str = 'ingres:///demodb'  # local demodb
-    con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
-    engine = sqlalchemy.create_engine(con_str)
-    connection = engine.connect()
-    query = 'SELECT * FROM iidbconstants'
-    for row in connection.execute(sqlalchemy.text(query)):
-        print(row)
-
-
-NOTE Default ODBC Driver name used is "Ingres", ensure this is the same bit-age as the Python interpreter.
-For example for 64-bit Python, ensure ODBC Driver called "Ingres" is also 64-bit.
+Ensure Ingres ODBC driver is available, Ingres sqlalchemy defaults to using "Ingres" ODBC driver, ensure this is the same bit-age as the Python interpreter. For example, for 64-bit Python, ensure ODBC Driver called "Ingres" is also 64-bit.
 
 ODBC Driver name can be overridden via environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME`, for example:
-
 
 Windows 64-bit:
 
@@ -60,3 +47,27 @@ Windows 64-bit:
 Windows 32-bit:
 
     set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Ingres CR
+
+Under Linux/Unix check ODBC settings and if using UnixODBC, check how wide-char support was built, recommendation for out-of-box Linux distributions:
+
+    # Most Linux distros build UnixODBC with non-default build options
+    export II_ODBC_WCHAR_SIZE=2
+
+    # set variables for ODBC config
+    export ODBCSYSINI=$II_SYSTEM/ingres/files
+    export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
+
+Quick python test:
+
+    import sys
+    import sqlalchemy
+    
+    print('Python %s on %s' % (sys.version, sys.platform))
+    print(sqlalchemy.__version__)
+    con_str = 'ingres:///demodb'  # local demodb
+    con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
+    engine = sqlalchemy.create_engine(con_str)
+    connection = engine.connect()
+    query = 'SELECT * FROM iidbconstants'
+    for row in connection.execute(sqlalchemy.text(query)):
+        print(row)
