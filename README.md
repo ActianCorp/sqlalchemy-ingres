@@ -14,6 +14,12 @@ Right now this is for dev purposes so install SQLAlchemy as per normal, for exam
 
     pip install sqlalchemy
 
+or for dev testing and modifying/running tests:
+
+    git clone https://github.com/sqlalchemy/sqlalchemy.git
+    cd sqlalchemy
+    pip install -e .
+
 Ingres dialect only tested with pyodbc so far:
 
     pip install pyodbc
