@@ -20,7 +20,7 @@ or for dev testing and modifying/running tests:
     cd sqlalchemy
     pip install -e .
 
-Ingres dialect only tested with pyodbc so far:
+Ingres dialect tested with pyodbc and pypyodbc (pypyodbc useful for debugging, to see what SQLAlchemy is calling with):
 
     pip install pyodbc
 
