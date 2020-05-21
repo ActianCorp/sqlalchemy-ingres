@@ -71,3 +71,42 @@ Quick python test:
     query = 'SELECT * FROM iidbconstants'
     for row in connection.execute(sqlalchemy.text(query)):
         print(row)
+
+### Running SA test suite
+
+NOTE below is for Python 2.7 and 3.4, can remove version pin for current python. Mock appears to be a dependency that is not pulled in for py2.7
+
+    python -m pip  install --upgrade pip
+    python -m pip  install tox "pytest==4.6"
+    python -m pip  install mock
+
+Setup test config
+
+    $ cat test.cfg
+    # test.cfg file
+    # see README.unittests.rst
+    #       pytest --db sqlite_file
+    [db]
+    sqlite_file=sqlite:///querytest.sqlite3
+
+    # local
+    ingres_odbc=ingres:///sa
+
+Code change needed to SA:
+
+    diff --git a/test/requirements.py b/test/requirements.py
+    index cf9168f5a..fcc4f37a0 100644
+    --- a/test/requirements.py
+    +++ b/test/requirements.py
+    @@ -394,6 +394,9 @@ class DefaultRequirements(SuiteRequirements):
+             elif against(config, "oracle"):
+                 default = "READ COMMITTED"
+                 levels.add("AUTOCOMMIT")
+    +        elif against(config, "ingres"):
+    +            default = "READ COMMITTED"
+    +            levels.add("AUTOCOMMIT")  # probably needed, not sure what this is though - assuming tests are not commiting and expecting autocommit semantics
+             else:
+                 raise NotImplementedError()
+
+Run (all) tests.
+    pytest --db ingres_odbc --junit-xml=all_results_junit.xml --maxfail=12000
