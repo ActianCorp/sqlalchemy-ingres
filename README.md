@@ -5,7 +5,7 @@ Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2
 Current work-in-progress with:
 
   * SQLAlchemy 1.3.16 and 1.4.0b1
-  * Ingres 11.1 and Vector 5.1 - via ODBC
+  * Avalanche, Ingres 11.1, Vector 5.1, and Vector 6.0 - via ODBC
 
 
 ## Development instructions
