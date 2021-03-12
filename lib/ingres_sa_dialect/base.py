@@ -522,7 +522,10 @@ class IngresDialect(default.DefaultDialect):
         rs = None
         
         try:
-            rs = connection.execute(sqltext, params)
+            if params:
+                rs = connection.execute(sqltext, params)
+            else:
+                rs = connection.execute(sqltext)
             
             return [row[0].rstrip() for row in rs.fetchall()]
         finally:
