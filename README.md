@@ -50,27 +50,31 @@ Windows 32-bit:
 
 Under Linux/Unix check ODBC settings and if using UnixODBC, check how wide-char support was built, recommendation for out-of-box Linux distributions:
 
-    # Most Linux distros build UnixODBC with non-default build options
-    export II_ODBC_WCHAR_SIZE=2
+```shell
+# Most Linux distros build UnixODBC with non-default build options
+export II_ODBC_WCHAR_SIZE=2
 
-    # set variables for ODBC config
-    export ODBCSYSINI=$II_SYSTEM/ingres/files
-    export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
+# set variables for ODBC config
+export ODBCSYSINI=$II_SYSTEM/ingres/files
+export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
+```
 
 Quick python test:
 
-    import sys
-    import sqlalchemy
-    
-    print('Python %s on %s' % (sys.version, sys.platform))
-    print(sqlalchemy.__version__)
-    con_str = 'ingres:///demodb'  # local demodb
-    #con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
-    engine = sqlalchemy.create_engine(con_str)
-    connection = engine.connect()
-    query = 'SELECT * FROM iidbconstants'
-    for row in connection.execute(sqlalchemy.text(query)):
-        print(row)
+```python
+import sys
+import sqlalchemy
+
+print('Python %s on %s' % (sys.version, sys.platform))
+print(sqlalchemy.__version__)
+con_str = 'ingres:///demodb'  # local demodb
+#con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
+engine = sqlalchemy.create_engine(con_str)
+connection = engine.connect()
+query = 'SELECT * FROM iidbconstants'
+for row in connection.execute(sqlalchemy.text(query)):
+    print(row)
+```
 
 ### Running SA test suite
 
