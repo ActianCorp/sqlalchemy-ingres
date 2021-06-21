@@ -80,6 +80,18 @@ for row in connection.execute(sqlalchemy.text(query)):
     print(row)
 ```
 
+### Troubleshooting
+
+Getting error:
+
+    sqlalchemy.exc.DatabaseError: (pypyodbc.DatabaseError) ('08004', '[08004] [Actian][Ingres ODBC Driver][INGRES]Requested association partner is unavailable')
+
+1. DBMS may not be running or accesible (e.g. network error).
+2. Could be using a Driver name that is not available (or the wrong number of bits, e.g. 32-bit versus 64-bit or vice-versa), or wrong environment (e.g. multiple DBMS/client installations). Solution, make use of environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME` either in the environment or in Python code, e.g:
+
+    import os; os.environ['SQLALCHEMY_INGRES_ODBC_DRIVER_NAME'] = 'Ingres X2'  # Etc. where X2 is the installation id (output from, "ingprenv II_INSTALLATION")
+
+
 ### Running SA test suite
 
 NOTE below is for Python 2.7 and 3.4, can remove version pin for current python. Mock appears to be a dependency that is not pulled in for py2.7
