@@ -22,8 +22,8 @@ or for dev testing and modifying/running tests:
 
     git clone https://github.com/sqlalchemy/sqlalchemy.git
     cd sqlalchemy
-    pip install -e .
-    #python -m pip install -e .
+    #pip install -e .
+    python -m pip install -e .   # https://adamj.eu/tech/2020/02/25/use-python-m-pip-everywhere/
 
 Ingres dialect tested with pyodbc and pypyodbc (pypyodbc useful for debugging, to see what SQLAlchemy is calling with):
 
