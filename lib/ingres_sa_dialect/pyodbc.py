@@ -14,6 +14,13 @@ from sqlalchemy.engine.default import DefaultExecutionContext
 from ingres_sa_dialect.base import IngresDialect
 
 
+try:
+    ModuleNotFoundError  # Python 3 sanity check
+except NameError:
+    # Python 2.7
+    ModuleNotFoundError = ImportError
+
+
 class Ingres_pyodbc(IngresDialect):
     driver = 'pyodbc'
 
