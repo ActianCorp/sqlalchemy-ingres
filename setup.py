@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 setup(
     name = "ingres_sa_dialect",
-    version = "0.2",
+    version = "0.3",
     author = "Chris Clark",
     author_email = "Chris.Clark@actian.com",
     description = "An Ingres dialect for SQLAlchemy",

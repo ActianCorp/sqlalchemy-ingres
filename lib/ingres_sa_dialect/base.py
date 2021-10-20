@@ -118,7 +118,7 @@ class IngresTypeCompiler(compiler.GenericTypeCompiler):
     def visit_TINYINT(self, type_):
         return 'TINYINT'
     def visit_DATETIME(self, type_):
-        return 'INGRESDATE'
+        return 'TIMESTAMP'
     def visit_DATE(self, type_):
         return 'ANSIDATE'
     def visit_CLOB(self, type_):
