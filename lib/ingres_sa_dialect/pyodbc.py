@@ -39,7 +39,7 @@ class Ingres_pyodbc(IngresDialect):
 
     def create_connect_args(self, url):
         opts = url.translate_connect_args(username='uid', password='pwd', host='vnode')
-        driver_name = os.environ.get('SQLALCHEMY_INGRES_ODBC_DRIVER_NAME') or 'Ingres'
+        driver_name = os.environ.get('SQLALCHEMY_INGRES_ODBC_DRIVER_NAME') or 'Actian'  # TODO search driver list for Ingres and Actian, also attempt to find local version using II_INSTALLATION symbol table (if available)
 
         conn_list = []
         conn_list.append('Driver={' + driver_name + '}')  # FIXME using concat for now

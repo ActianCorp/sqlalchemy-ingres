@@ -5,9 +5,11 @@
 Versions
 --------
 
-This dialect was tested against Ingres 9.2.  Some features may not work on earlier versions.
-The driver used during testing was pyodbc and ODBC driver, available from esd.actian.com.
-zxjdbc has been tried but not fully tested.
+This dialect is tested against Actian Avalanche, Actian X 11.1, Vector 6.x,
+and was initially developed with Ingres 9.2.
+Some features may not work on earlier versions.
+The driver used during testing was pyodbc/pypyodbc and ODBC driver, available from esd.actian.com.
+zxjdbc has been tried but not fully tested (and has been removed from later versions of SQLAlchemy).
 
 Connection Strings
 ------------------
