@@ -375,7 +375,11 @@ class IngresDialect(default.DefaultDialect):
         finally:
             if rs:
                 rs.close()
-                
+
+    @reflection.cache
+    def get_pk_constraint(self, connection, table_name, schema=None, **kw):
+        return self.get_primary_keys(connection, table_name, schema, **kw)
+
     @reflection.cache
     def get_foreign_keys(self, connection, table_name, schema=None, **kw):
         sqltext = """
