@@ -13,6 +13,48 @@ Known to work with:
   * https://github.com/apache/superset
   * https://github.com/catherinedevlin/ipython-sql / Jupyter/IPython notebooks (see https://github.com/catherinedevlin/ipython-sql/pull/196 - or use `%config SqlMagic.autocommit=False`
 
+## Quickstart
+
+TL;DR
+
+Install/setup:
+
+    pip install pyodbc sqlalchemy
+    git clone https://github.com/clach04/ingres_sa_dialect.git
+    cd ingres_sa_dialect
+    pip install -e .
+
+
+Demo Sample / Sanity check:
+
+Linux/Unix
+
+    export SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=INGRES Y1
+    # or what ever the ODBC Driver name is; Actian, Ingres, etc.
+
+Windows:
+
+    SET SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=INGRES Y1
+    REM or what ever the ODBC Driver name is; Actian, Ingres, etc.
+
+NOTE ODBC Driver should be the same bitness as the Python interpreter. That is:
+
+  * for 64-bit Python ensure a 64-bit ODBC driver is available.
+  * For 32-bit Python ensure a 32-bit ODBC driver is available.
+
+Assuming local DBMS, python session:
+
+    Python 3.7.3 (v3.7.3:ef4ec6ed12, Mar 25 2019, 22:22:05) [MSC v.1916 64 bit (AMD64)] on win32
+    Type "help", "copyright", "credits" or "license" for more information.
+    >>> import sqlalchemy
+    >>> engine = sqlalchemy.create_engine('ingres:///iidbdb')  # local DBMS
+    >>> connection = engine.connect()
+    >>> for row in connection.execute(sqlalchemy.text('SELECT count(*) FROM iidatabase')):
+    ...     print(row)
+    ...
+    (33,)
+
+
 ## Development instructions
 
 Right now this is for dev purposes so install SQLAlchemy as per normal, for example:
