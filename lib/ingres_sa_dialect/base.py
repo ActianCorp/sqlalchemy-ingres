@@ -137,7 +137,7 @@ class IngresTypeCompiler(compiler.GenericTypeCompiler):
         elif type_.scale is None:
             return "DECIMAL(%(precision)s)" % {'precision': type_.precision}
         else:
-            return "DECIMAL(%{precision}s,%{scale}s)" % {'precision': type_.precision, 
+            return "DECIMAL(%(precision)s,%(scale)s)" % {'precision': type_.precision,
                                                          'scale': type_.scale}
     def visit_unicode(self,type_):
         return self.visit_NVARCHAR(type_)
