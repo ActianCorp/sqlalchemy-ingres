@@ -109,7 +109,7 @@ export ODBCSYSINI=$II_SYSTEM/ingres/files
 export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
 ```
 
-Quick python test:
+### Quick python test
 
 ```python
 import sys
