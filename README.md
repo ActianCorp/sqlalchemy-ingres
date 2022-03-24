@@ -10,7 +10,7 @@ Current work-in-progress with:
 Known to work with:
 
   * https://github.com/cloudera/hue
-  * https://github.com/apache/superset
+  * https://github.com/apache/superset (see https://github.com/clach04/incubator-superset/tree/vector)
   * https://github.com/catherinedevlin/ipython-sql / Jupyter/IPython notebooks (see https://github.com/catherinedevlin/ipython-sql/pull/196 - or use `%config SqlMagic.autocommit=False`
   * https://github.com/wireservice/csvkit (see https://github.com/wireservice/agate-sql/pull/36)
 
