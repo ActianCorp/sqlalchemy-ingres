@@ -7,6 +7,8 @@ Current work-in-progress with:
   * SQLAlchemy 1.3.16 and 1.4.0b1
   * Avalanche, Ingres 11.1, Vector 5.1, and Vector 6.0 - via ODBC
 
+Jython/JDBC support is currently untested, as the current code relies on zxjdbc it is not recommended this be used (see https://hg.sr.ht/~clach04/jyjdbc for as an alternative that includes full Decimal datatype support).
+
 Known to work with:
 
   * https://github.com/cloudera/hue
