@@ -16,6 +16,13 @@ Known to work with:
   * https://github.com/catherinedevlin/ipython-sql / Jupyter/IPython notebooks (see https://github.com/catherinedevlin/ipython-sql/pull/196 - or use `%config SqlMagic.autocommit=False`
   * https://github.com/wireservice/csvkit (see https://github.com/wireservice/agate-sql/pull/36)
 
+
+-   [Quickstart](#quickstart)
+-   [Development instructions](#development-instructions)
+    -   [Quick python test](#quick-python-test)
+    -   [Troubleshooting](#troubleshooting)
+    -   [Running SA test suite](#running-sa-test-suite)
+
 ## Quickstart
 
 TL;DR
