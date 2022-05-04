@@ -130,6 +130,9 @@ print('Python %s on %s' % (sys.version, sys.platform))
 print(sqlalchemy.__version__)
 con_str = 'ingres:///demodb'  # local demodb
 #con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
+print(con_str)
+print(ingres_sa_dialect.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
+
 engine = sqlalchemy.create_engine(con_str)
 connection = engine.connect()
 query = 'SELECT * FROM iidbconstants'
