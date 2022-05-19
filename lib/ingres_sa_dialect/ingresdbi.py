@@ -12,6 +12,7 @@ from sqlalchemy.engine.default import DefaultExecutionContext
 
 class Ingres_ingresdbi(IngresDialect):
     driver = 'ingresdbi'
+    supports_statement_cache = False  # NOTE `IngresDialect.supports_statement_cache` is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
 
     def __init__(self, **kwargs):
         IngresDialect.__init__(self, **kwargs)

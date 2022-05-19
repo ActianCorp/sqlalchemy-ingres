@@ -263,6 +263,7 @@ class IngresDialect(default.DefaultDialect):
     supports_unicode_statements = True
     supports_unicode_binds = True
     supports_empty_insert = False
+    supports_statement_cache = False  # NOTE this is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
     postfetch_lastrowid   = False
     requires_name_normalization = True
     sequences_optional    = False

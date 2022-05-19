@@ -23,6 +23,7 @@ except NameError:
 
 class Ingres_pyodbc(IngresDialect):
     driver = 'pyodbc'
+    supports_statement_cache = False  # quiesce https://sqlalche.me/e/14/cprf  NOTE `IngresDialect.supports_statement_cache` is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
 
     def __init__(self, **kwargs):
         IngresDialect.__init__(self, **kwargs)

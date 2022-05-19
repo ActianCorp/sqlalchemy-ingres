@@ -15,6 +15,7 @@ from ingres_sa_dialect.base import IngresDialect
 class Ingres_zxjdbc(ZxJDBCConnector, IngresDialect):
     jdbc_db_name = 'ingres'
     jdbc_driver_name = 'com.ingres.jdbc.IngresDriver'
+    supports_statement_cache = False  # NOTE `IngresDialect.supports_statement_cache` is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
 
     def _get_server_version_info(self, connection):
         return connection.connection.dbversion
