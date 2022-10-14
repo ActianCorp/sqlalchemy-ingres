@@ -138,7 +138,7 @@ import sys
 import sqlalchemy
 
 print('Python %s on %s' % (sys.version, sys.platform))
-print(sqlalchemy.__version__)
+print('SQLAlchemy %r' % sqlalchemy.__version__)
 con_str = 'ingres:///demodb'  # local demodb
 #con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
 print(con_str)
