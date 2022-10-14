@@ -7,6 +7,17 @@ Current work-in-progress with:
   * SQLAlchemy 1.3.16 and 1.4.36
   * Avalanche, Ingres 11.x, Vector 5.1, and Vector 6.x - via ODBC
 
+The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy.
+
+It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
+```
+Version pinning examples:
+
+    pip install 'sqlalchemy < 2.0.0'
+    python -m pip install 'sqlalchemy < 2.0.0'
+    python -m pip install sqlalchemy==1.4.41
+ ```
+ 
 Jython/JDBC support is currently untested, as the current code relies on zxjdbc it is not recommended this be used (see https://hg.sr.ht/~clach04/jyjdbc for as an alternative that includes full Decimal datatype support).
 
 Known to work with:
