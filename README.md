@@ -7,7 +7,7 @@ Current work-in-progress with:
   * SQLAlchemy 1.3.16 and 1.4.36
   * Avalanche, Ingres 11.x, Vector 5.1, and Vector 6.x - via ODBC
 
-The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/clach04/ingres_sa_dialect/issues/5)). Note the `git clone` commands in this readme that specify an explicit branch to clone (prefer the latest `1.x`).
+The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/clach04/ingres_sa_dialect/issues/5)).
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 ```
@@ -44,7 +44,7 @@ TL;DR
 Install/setup:
 
     python -m pip install pyodbc sqlalchemy
-    git clone -b rel_1_4_42 https://github.com/clach04/ingres_sa_dialect.git
+    git clone https://github.com/clach04/ingres_sa_dialect.git
     cd ingres_sa_dialect
     python -m pip install -e .
 
@@ -100,7 +100,7 @@ Ingres dialect tested with pyodbc and pypyodbc (pypyodbc useful for debugging, t
 
 Download Ingres dialect for SQLAlchemy:
 
-    git clone -b rel_1_4_42 https://github.com/clach04/ingres_sa_dialect.git
+    git clone https://github.com/clach04/ingres_sa_dialect.git
 
 Setup for dev use:
 
