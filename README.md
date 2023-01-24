@@ -1,4 +1,4 @@
-Ingres dialect for SQLAlchemy https://github.com/sqlalchemy/sqlalchemy CPython 3.x (and 2.7).
+Avalanche, Actian X, Ingres, and Vector dialect for SQLAlchemy https://github.com/sqlalchemy/sqlalchemy CPython 3.x (and 2.7).
 
 Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2
 
