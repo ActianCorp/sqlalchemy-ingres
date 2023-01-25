@@ -1,8 +1,12 @@
-Avalanche, Actian X, Ingres, and Vector dialect for SQLAlchemy https://github.com/sqlalchemy/sqlalchemy CPython 3.x (and 2.7).
+Avalanche, Actian X, Ingres, and Vector dialect for [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy) CPython 3.x (and 2.7).
 
-Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2
+For more information about SQLAlchemy see:
 
-Current work-in-progress with:
+  * https://github.com/sqlalchemy/sqlalchemy
+  * https://www.sqlalchemy.org/
+  * https://pypi.org/project/SQLAlchemy/
+
+Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2. Current work-in-progress with:
 
   * SQLAlchemy 1.3.16 and 1.4.36
   * Avalanche, Ingres 11.x, Vector 5.1, and Vector 6.x - via ODBC
