@@ -43,6 +43,7 @@ isolation_lookup = set(
 
 ischema_names = {'ANSIDATE': types.Date,
            'BIGINT': types.BigInteger,
+           'BOOLEAN': types.BOOLEAN,
            'BYTE': types.BINARY,
            'BYTE VARYING': types.BINARY,
            'C': types.TEXT,
