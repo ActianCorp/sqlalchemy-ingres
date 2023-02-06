@@ -14,9 +14,8 @@ Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2. Current work
 The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/ActianCorp/ingres_sa_dialect/issues/5)).
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
-```
 Version pinning examples:
-
+```
     python -m pip install 'sqlalchemy < 2.0.0'
     python -m pip install sqlalchemy==1.4.42
  ```
@@ -209,5 +208,6 @@ Code change needed to SA:
              else:
                  raise NotImplementedError()
 
-Run (all) tests.
+Run (all) tests:
+
     pytest --db ingres_odbc --junit-xml=all_results_junit.xml --maxfail=12000
