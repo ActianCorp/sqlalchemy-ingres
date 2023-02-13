@@ -7,9 +7,9 @@
 Ingres DB connector for the ingresdbi module, which can be downloaded from
 http://esd.ingres.com.
 """
-from ingres_sa_dialect.base import IngresDialect
-import sqlalchemy
 from sqlalchemy.engine.default import DefaultExecutionContext
+from ingres_sa_dialect.base import IngresDialect
+from ingres_sa_dialect.base import sqlalchemy_version_tuple
 
 class Ingres_ingresdbi(IngresDialect):
     driver = 'ingresdbi'
@@ -18,7 +18,7 @@ class Ingres_ingresdbi(IngresDialect):
     def __init__(self, **kwargs):
         IngresDialect.__init__(self, **kwargs)
 
-    if (int((sqlalchemy.__version__).split('.')[0]) >= 2):
+    if (sqlalchemy_version_tuple >= (2,0)):
         @classmethod
         def import_dbapi(cls):
             return __import__('ingresdbi')

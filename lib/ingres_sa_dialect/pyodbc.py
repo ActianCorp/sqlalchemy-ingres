@@ -8,10 +8,9 @@ Ingres DB connector for the pyodbc/pypyodbc module
 """
 
 import os
-import sqlalchemy
 from sqlalchemy.engine.default import DefaultExecutionContext
 from ingres_sa_dialect.base import IngresDialect
-
+from ingres_sa_dialect.base import sqlalchemy_version_tuple
 
 try:
     ModuleNotFoundError  # Python 3 sanity check
@@ -27,7 +26,7 @@ class Ingres_pyodbc(IngresDialect):
     def __init__(self, **kwargs):
         IngresDialect.__init__(self, **kwargs)
 
-    if (int((sqlalchemy.__version__).split('.')[0]) >= 2):
+    if (sqlalchemy_version_tuple >= (2,0)):
         @classmethod
         def import_dbapi(cls):
             try:

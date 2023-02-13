@@ -32,6 +32,7 @@ from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 from sqlalchemy.sql.expression import func
 
+sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))
 
 # https://docs.actian.com/actianx/11.1/index.html#page/SQLRef/TRANSACTION_ISOLATION_LEVEL.htm
 isolation_lookup = set(
@@ -273,7 +274,7 @@ class IngresDialect(default.DefaultDialect):
     _isolation_lookup = isolation_lookup
     # TODO get_isolation_level()
     # TODO _check_max_identifier_length()
-    
+
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
 
@@ -690,7 +691,7 @@ class IngresDialect(default.DefaultDialect):
     def get_default_schema_name(self, connection):
         rs = None
         try:
-            if (int((sqlalchemy.__version__).split('.')[0]) >= 2):
+            if (sqlalchemy_version_tuple >= (2,0)):
                 rs = connection.execute(func.dbmsinfo('username'))
             else:
                 sqltext = """SELECT dbmsinfo('username')"""
