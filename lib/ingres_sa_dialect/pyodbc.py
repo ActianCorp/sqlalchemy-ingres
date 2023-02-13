@@ -8,9 +8,8 @@ Ingres DB connector for the pyodbc/pypyodbc module
 """
 
 import os
-
+import sqlalchemy
 from sqlalchemy.engine.default import DefaultExecutionContext
-
 from ingres_sa_dialect.base import IngresDialect
 
 
@@ -28,15 +27,26 @@ class Ingres_pyodbc(IngresDialect):
     def __init__(self, **kwargs):
         IngresDialect.__init__(self, **kwargs)
 
-    @classmethod
-    def dbapi(cls):
-        try:
-            driver = __import__(Ingres_pyodbc.driver)
-        except ModuleNotFoundError:
-            # fallback to pure Python version
-            Ingres_pyodbc.driver = 'pypyodbc'
-            driver = __import__(Ingres_pyodbc.driver)
-        return driver
+    if (int((sqlalchemy.__version__).split('.')[0]) >= 2):
+        @classmethod
+        def import_dbapi(cls):
+            try:
+                driver = __import__(Ingres_pyodbc.driver)
+            except ModuleNotFoundError:
+                # fallback to pure Python version
+                Ingres_pyodbc.driver = 'pypyodbc'
+                driver = __import__(Ingres_pyodbc.driver)
+            return driver
+    else:
+        @classmethod
+        def dbapi(cls):
+            try:
+                driver = __import__(Ingres_pyodbc.driver)
+            except ModuleNotFoundError:
+                # fallback to pure Python version
+                Ingres_pyodbc.driver = 'pypyodbc'
+                driver = __import__(Ingres_pyodbc.driver)
+            return driver
 
     def create_connect_args(self, url):
         opts = url.translate_connect_args(username='uid', password='pwd', host='vnode')

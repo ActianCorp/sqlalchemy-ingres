@@ -25,10 +25,12 @@ where server is the remote server name, or (LOCAL) if local,
 
 """
 
+import sqlalchemy
 from sqlalchemy import types, schema
 from sqlalchemy.engine import default, reflection
 from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
+from sqlalchemy.sql.expression import func
 
 
 # https://docs.actian.com/actianx/11.1/index.html#page/SQLRef/TRANSACTION_ISOLATION_LEVEL.htm
@@ -686,12 +688,13 @@ class IngresDialect(default.DefaultDialect):
                 rs.close()
     
     def get_default_schema_name(self, connection):
-        sqltext = """SELECT dbmsinfo('username')"""
-        
         rs = None
         try:
-            # TODO consider using exec_driver_sql() instead
-            rs = connection.execute(sqltext)
+            if (int((sqlalchemy.__version__).split('.')[0]) >= 2):
+                rs = connection.execute(func.dbmsinfo('username'))
+            else:
+                sqltext = """SELECT dbmsinfo('username')"""
+                rs = connection.execute(sqltext)
             return rs.fetchone()[0]
         finally:
             if rs:
