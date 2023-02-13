@@ -25,11 +25,14 @@ where server is the remote server name, or (LOCAL) if local,
 
 """
 
+import sqlalchemy
 from sqlalchemy import types, schema
 from sqlalchemy.engine import default, reflection
 from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
+from sqlalchemy.sql.expression import func
 
+sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))
 
 # https://docs.actian.com/actianx/11.1/index.html#page/SQLRef/TRANSACTION_ISOLATION_LEVEL.htm
 isolation_lookup = set(
@@ -271,7 +274,7 @@ class IngresDialect(default.DefaultDialect):
     _isolation_lookup = isolation_lookup
     # TODO get_isolation_level()
     # TODO _check_max_identifier_length()
-    
+
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
 
@@ -686,12 +689,13 @@ class IngresDialect(default.DefaultDialect):
                 rs.close()
     
     def get_default_schema_name(self, connection):
-        sqltext = """SELECT dbmsinfo('username')"""
-        
         rs = None
         try:
-            # TODO consider using exec_driver_sql() instead
-            rs = connection.execute(sqltext)
+            if (sqlalchemy_version_tuple >= (2,0)):
+                rs = connection.execute(func.dbmsinfo('username'))
+            else:
+                sqltext = """SELECT dbmsinfo('username')"""
+                rs = connection.execute(sqltext)
             return rs.fetchone()[0]
         finally:
             if rs:

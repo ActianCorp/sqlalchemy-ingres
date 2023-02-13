@@ -11,8 +11,10 @@ setup(
     packages=find_packages('lib'),
     package_dir={'':'lib'},
 
-    entry_points="""
-    [sqlalchemy.dialects]
-    ingres = ingres_sa_dialect:base.dialect
-    """
+      entry_points = {                                                
+          'sqlalchemy.dialects': [                                    
+              'ingres = ingres_sa_dialect:base.dialect',              
+              'ingres.pyodbc = ingres_sa_dialect.pyodbc:Ingres_pyodbc'
+           ]                                                           
+      }                                                               
 )
