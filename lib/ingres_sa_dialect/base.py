@@ -32,7 +32,8 @@ from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 from sqlalchemy.sql.expression import func
 
-sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))
+#sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))  # TODO review - simplistic approach does not handle '1.4.0b1', consider using https://pypi.org/project/version-parser/
+sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.', 2)[0:2]))  # Only care about major and minor
 
 # https://docs.actian.com/actianx/11.1/index.html#page/SQLRef/TRANSACTION_ISOLATION_LEVEL.htm
 isolation_lookup = set(
