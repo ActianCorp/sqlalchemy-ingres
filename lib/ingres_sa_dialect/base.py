@@ -293,12 +293,12 @@ class IngresDialect(default.DefaultDialect):
                 iicolumns
             WHERE
                 table_name = ?"""
-        params = [self.denormalize_name(table_name)]
+        params = (self.denormalize_name(table_name),)
         
         if schema:
             sqltext += """
                 AND table_owner = ?"""
-            params.append(self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
             
         sqltext += """
             ORDER BY
@@ -307,7 +307,7 @@ class IngresDialect(default.DefaultDialect):
         rs = None
         columns = []
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             
             for row in rs.fetchall():
                 coldata = {}
@@ -365,17 +365,17 @@ class IngresDialect(default.DefaultDialect):
                 k.constraint_name = c.constraint_name
             AND c.constraint_type = 'P'
             AND k.table_name = ?"""
-        params = [self.denormalize_name(table_name)]
+        params = (self.denormalize_name(table_name),)
         
         if schema:
             sqltext += """
                 AND k.schema_name = ?"""
-            params.append(self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
         
         rs = None
         
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             
             return [row[0].rstrip() for row in rs.fetchall()]
         finally:
@@ -407,12 +407,12 @@ class IngresDialect(default.DefaultDialect):
             AND f.constraint_name = rc.ref_constraint_name
             AND p.key_position = f.key_position
             AND f.table_name = ?"""
-        params = [self.denormalize_name(table_name)]
+        params = (self.denormalize_name(table_name),)
         
         if schema:
             sqltext += """
                 AND f.schema_name = ?"""
-            params.append(self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
             
         sqltext += """
             ORDER BY 
@@ -421,7 +421,7 @@ class IngresDialect(default.DefaultDialect):
         rs = None
         foreign_keys = {}
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             
             for row in rs.fetchall():
                 name = row[0].rstrip()
@@ -468,7 +468,7 @@ class IngresDialect(default.DefaultDialect):
         if schema:
             sqltext += """
                 AND table_owner = ?"""
-            params = [self.denormalize_name(schema)]
+            params = (self.denormalize_name(schema),)
             
             if schema != "$ingres":
                 sqltext += " AND table_name NOT LIKE 'ii%'"
@@ -481,10 +481,10 @@ class IngresDialect(default.DefaultDialect):
         
         try:
             if params:
-                rs = connection.execute(sqltext, params)
+                rs = connection.exec_driver_sql(sqltext, params)
             else:
                 # sqlalchemy assumes anything after query text is a list/tuple of values
-                rs = connection.execute(sqltext)
+                rs = connection.exec_driver_sql(sqltext)
         
             return [row[0].rstrip() for row in rs.fetchall()]
         finally:
@@ -502,7 +502,7 @@ class IngresDialect(default.DefaultDialect):
         rs = None
         
         try:
-            rs = connection.execute(sqltext)
+            rs = connection.exec_driver_sql(sqltext)
             
             return [row[0].rstrip() for row in rs.fetchall()]
         finally:
@@ -650,16 +650,16 @@ class IngresDialect(default.DefaultDialect):
             WHERE
                 table_name = ?
             AND table_type = 'T'"""
-        params = [self.denormalize_name(table_name)]
+        params = (self.denormalize_name(table_name),)
         
         if schema:
             sqltext += """
                 AND table_owner = ?"""
-            params.append(self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
 
         rs = None
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             return len(rs.fetchall()) > 0
         finally:
             if rs:
@@ -673,17 +673,17 @@ class IngresDialect(default.DefaultDialect):
                 iisequences
             WHERE
                 seq_name = ?"""
-        params = [self.denormalize_name(sequence_name)]
+        params = (self.denormalize_name(sequence_name),)
         
         if schema:
             sqltext += """
                 AND seq_owner = ?"""
-            params.append(self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
             
         rs = None
         
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             return len(rs.fetchall()) > 0
         finally:
             if rs:
