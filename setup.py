@@ -3,10 +3,10 @@ setup(
     name = "ingres_sa_dialect",
     version = "0.4",
     author = "Chris Clark",
-    author-email = "Chris.Clark@actian.com",
+    author_email = "Chris.Clark@actian.com",
     description = "An Ingres dialect for SQLAlchemy",
     maintainer = "Michael Habiger",
-    maintainer-email = "michael.habiger@hcl-software.com",
+    maintainer_email = "michael.habiger@hcl-software.com",
 
     license = "MIT",
 
