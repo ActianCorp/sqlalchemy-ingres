@@ -525,7 +525,7 @@ class IngresDialect(default.DefaultDialect):
             sqltext += """
                 WHERE
                     table_owner = ?"""
-            params = [self.denormalize_name(schema)]
+            params = (self.denormalize_name(schema),)
         else:
             sqltext += """
                 WHERE 
@@ -535,9 +535,9 @@ class IngresDialect(default.DefaultDialect):
         
         try:
             if params:
-                rs = connection.execute(sqltext, params)
+                rs = connection.exec_driver_sql(sqltext, params)
             else:
-                rs = connection.execute(sqltext)
+                rs = connection.exec_driver_sql(sqltext)
             
             return [row[0].rstrip() for row in rs.fetchall()]
         finally:
@@ -553,12 +553,12 @@ class IngresDialect(default.DefaultDialect):
                 iiviews
             WHERE
                 table_name = ?"""
-        params = [self.denormalize_name(view_name)]
+        params = (self.denormalize_name(view_name),)
         
         if schema:
             sqltext += """
                 AND table_owner = ?"""
-            params.append(self.denormalize_name(schema))
+            params(*params, self.denormalize_name(schema))
         else:
             sqltext += """
                 AND table_owner != '$ingres'"""
@@ -570,7 +570,7 @@ class IngresDialect(default.DefaultDialect):
         rs = None
         
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             
             return "".join([row[0] for row in rs.fetchall()])
         finally:
@@ -591,12 +591,12 @@ class IngresDialect(default.DefaultDialect):
                 i.index_name = c.index_name
             AND i.index_owner = c.index_owner
             AND i.base_name = ?"""
-        params = [self.denormalize_name(table_name)]
+        params = (self.denormalize_name(table_name),)
         
         if schema:
             sqltext += """
                 AND i.index_owner = ?"""
-            params.append(self.denormalize_name(schema))
+            params(*params, self.denormalize_name(schema))
             
         sqltext += """
             ORDER BY
@@ -606,7 +606,7 @@ class IngresDialect(default.DefaultDialect):
         indexes = {}
         
         try:
-            rs = connection.execute(sqltext, params)
+            rs = connection.exec_driver_sql(sqltext, params)
             
             for row in rs.fetchall():
                 name = row[0].rstrip()
