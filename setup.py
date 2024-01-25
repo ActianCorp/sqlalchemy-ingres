@@ -10,10 +10,13 @@ if os.path.exists(readme_filename):
 else:
     long_description = None
 
+# pick up version number, __version__
+exec(open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'lib', 'sqlalchemy_ingres', '_version.py')).read())
+
 
 setup(
     name = "sqlalchemy-ingres",  # note hypen, not underscore
-    version = "0.4",  # FIXME embed/pull from code - https://github.com/ActianCorp/sqlalchemy-ingres/issues/10
+    version = __version__,
     author = "Chris Clark",
     author_email = "Chris.Clark@actian.com",
     description = "SQLAlchemy dialect for Actian databases; Actian Data Platform (nee Avalanche), Actian X, Ingres, and Vector",
