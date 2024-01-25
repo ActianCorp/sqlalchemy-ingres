@@ -20,7 +20,7 @@ setup(
     maintainer = "Michael Habiger",
     maintainer_email = "michael.habiger@hcl-software.com",
 
-    license = " Apache-2.0",
+    license = "Apache-2.0",
 
     packages=find_packages('lib'),  # TODO review, remove and replace with static and py_modules
     package_dir={'':'lib'},
