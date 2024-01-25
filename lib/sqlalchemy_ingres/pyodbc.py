@@ -9,8 +9,8 @@ Ingres DB connector for the pyodbc/pypyodbc module
 
 import os
 from sqlalchemy.engine.default import DefaultExecutionContext
-from ingres_sa_dialect.base import IngresDialect
-from ingres_sa_dialect.base import sqlalchemy_version_tuple
+from sqlalchemy_ingres.base import IngresDialect
+from sqlalchemy_ingres.base import sqlalchemy_version_tuple
 
 try:
     ModuleNotFoundError  # Python 3 sanity check

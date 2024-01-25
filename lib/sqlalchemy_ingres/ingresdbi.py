@@ -8,8 +8,8 @@ Ingres DB connector for the ingresdbi module, which can be downloaded from
 http://esd.ingres.com.
 """
 from sqlalchemy.engine.default import DefaultExecutionContext
-from ingres_sa_dialect.base import IngresDialect
-from ingres_sa_dialect.base import sqlalchemy_version_tuple
+from sqlalchemy_ingres.base import IngresDialect
+from sqlalchemy_ingres.base import sqlalchemy_version_tuple
 
 class Ingres_ingresdbi(IngresDialect):
     driver = 'ingresdbi'

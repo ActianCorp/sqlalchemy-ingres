@@ -1,22 +1,38 @@
 from setuptools import setup, find_packages
 setup(
-    name = "ingres_sa_dialect",
-    version = "0.4",
+    name = "sqlalchemy-ingres",  # note hypen, not underscore
+    version = "0.4",  # FIXME embed/pull from code
     author = "Chris Clark",
     author_email = "Chris.Clark@actian.com",
-    description = "An Ingres dialect for SQLAlchemy",
+    description = "SQLAlchemy dialect for Actian databases; Actian Data Platform (nee Avalanche), Actian X, Ingres, and Vector",
     maintainer = "Michael Habiger",
     maintainer_email = "michael.habiger@hcl-software.com",
 
-    license = "MIT",
+    license = "MIT",  # FIXME
+    # FIXME long description, pull from readme?
 
     packages=find_packages('lib'),
     package_dir={'':'lib'},
 
-      entry_points = {                                                
-          'sqlalchemy.dialects': [                                    
-              'ingres = ingres_sa_dialect:base.dialect',              
-              'ingres.pyodbc = ingres_sa_dialect.pyodbc:Ingres_pyodbc'
-           ]                                                           
-      }                                                               
+    classifiers=[  # See http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        'Development Status :: 4 - Beta',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.12',
+        'Topic :: Database',
+        'Programming Language :: SQL',
+        ],
+    platforms='any',  # or distutils.util.get_platform()
+    install_requires=['sqlalchemy'],
+
+    entry_points = {                                                
+        'sqlalchemy.dialects': [                                    
+            'ingres = sqlalchemy_ingres:base.dialect',  # note underscore, not hypen
+            'ingres.pyodbc = sqlalchemy_ingres.pyodbc:Ingres_pyodbc'  # note underscore, not hypen
+        ]                                                           
+    }                                                               
 )

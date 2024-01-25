@@ -10,7 +10,7 @@ Requires the Ingres JDBC driver, which can be downloaded from
 http://esd.ingres.com
 """
 from sqlalchemy.connectors.zxJDBC import ZxJDBCConnector
-from ingres_sa_dialect.base import IngresDialect
+from sqlalchemy_ingres.base import IngresDialect
 
 class Ingres_zxjdbc(ZxJDBCConnector, IngresDialect):
     jdbc_db_name = 'ingres'
