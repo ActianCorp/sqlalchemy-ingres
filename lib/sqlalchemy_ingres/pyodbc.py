@@ -2,7 +2,7 @@
 # Copyright 2020 Actian Corporation
 #
 # This module is part of SQLAlchemy and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
+# the Apache-2.0 License: https://opensource.org/license/apache-2-0/
 """
 Ingres DB connector for the pyodbc/pypyodbc module
 """

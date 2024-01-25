@@ -2,7 +2,7 @@
 # Copyright 2009 Ingres Corporation
 #
 # This module is part of SQLAlchemy and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
+# the Apache-2.0 License: https://opensource.org/license/apache-2-0/
 """
 Support for the Ingres database using the zxjdbc connector for jPython.
 
