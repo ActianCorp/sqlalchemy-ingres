@@ -1,6 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: us-ascii -*-
+# vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
+
 import os
+import sys
 
 from setuptools import setup, find_packages
+
+
+if len(sys.argv) <= 1:
+    print("""
+Suggested setup.py parameters:
+
+    * build
+    * install
+    * sdist  --formats=zip
+    * sdist  # NOTE requires tar/gzip commands
+
+    python -m pip install -e .
+
+PyPi:
+
+    twine upload dist/*
+    ./setup.py  sdist ; twine upload dist/* --verbose
+
+""")
+
 
 readme_filename = 'README.md'
 if os.path.exists(readme_filename):
