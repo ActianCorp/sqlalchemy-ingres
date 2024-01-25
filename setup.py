@@ -1,14 +1,14 @@
 from setuptools import setup, find_packages
 setup(
     name = "sqlalchemy-ingres",  # note hypen, not underscore
-    version = "0.4",  # FIXME embed/pull from code
+    version = "0.4",  # FIXME embed/pull from code - https://github.com/ActianCorp/sqlalchemy-ingres/issues/10
     author = "Chris Clark",
     author_email = "Chris.Clark@actian.com",
     description = "SQLAlchemy dialect for Actian databases; Actian Data Platform (nee Avalanche), Actian X, Ingres, and Vector",
     maintainer = "Michael Habiger",
     maintainer_email = "michael.habiger@hcl-software.com",
 
-    license = "MIT",  # FIXME
+    license = " Apache-2.0",
     # FIXME long description, pull from readme?
 
     packages=find_packages('lib'),
