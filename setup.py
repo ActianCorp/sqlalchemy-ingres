@@ -44,6 +44,7 @@ setup(
     version = __version__,
     author = "Chris Clark",
     author_email = "Chris.Clark@actian.com",
+    url="https://github.com/ActianCorp/sqlalchemy-ingres",
     description = "SQLAlchemy dialect for Actian databases; Actian Data Platform (nee Avalanche), Actian X, Ingres, and Vector",
     long_description=long_description,
     long_description_content_type='text/markdown',
