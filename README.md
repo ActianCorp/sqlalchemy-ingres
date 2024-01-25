@@ -32,17 +32,35 @@ Known to work with:
 
 --------------------------------------------------------
 
--   [Quickstart](#quickstart)
--   [Development instructions](#development-instructions)
-    -   [Quick python test](#quick-python-test)
-    -   [Troubleshooting](#troubleshooting)
-    -   [Running SA test suite](#running-sa-test-suite)
+- [Quickstart](#quickstart)
+  * [Install from PyPi](#install-from-pypi)
+  * [Install latest from GitHub, without a source code checkout](#install-latest-from-github--without-a-source-code-checkout)
+  * [Install latest from GitHub, with a source code checkout](#install-latest-from-github--with-a-source-code-checkout)
+- [Development instructions](#development-instructions)
+  * [Quick python test](#quick-python-test)
+  * [Troubleshooting](#troubleshooting)
+  * [Running SA test suite](#running-sa-test-suite)
 
 --------------------------------------------------------
 
 ## Quickstart
 
 TL;DR
+
+### Install from PyPi
+
+
+    python -m pip install pyodbc sqlalchemy-ingres
+
+### Install latest from GitHub, without a source code checkout
+
+    python -m pip install -e git+https://github.com/ActianCorp/sqlalchemy-ingres.git
+
+Alternatively, for a `named_branch`:
+
+    python -m pip install -e git+https://github.com/ActianCorp/sqlalchemy-ingres.git@named_branch#egg=sqlalchemy-ingres
+
+### Install latest from GitHub, with a source code checkout
 
 Install/setup:
 
