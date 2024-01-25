@@ -1,3 +1,5 @@
+import os
+
 from setuptools import setup, find_packages
 
 readme_filename = 'README.md'
