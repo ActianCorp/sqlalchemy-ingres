@@ -21,6 +21,7 @@ Suggested setup.py parameters:
 
 PyPi:
 
+    python -m pip install setuptools twine
     twine upload dist/*
     ./setup.py  sdist ; twine upload dist/* --verbose
 
