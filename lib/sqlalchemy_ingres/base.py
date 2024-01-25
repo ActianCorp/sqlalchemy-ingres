@@ -256,7 +256,7 @@ class IngresExecutionContext(default.DefaultExecutionContext):
 class IngresDialect(default.DefaultDialect):
     name                  = 'ingres'
     default_paramstyle    = 'qmark'
-    max_identifier_length = 32
+    max_identifier_length = 32  # FIXME review
     colspecs              = colspecs
     ischema_names         = ischema_names
     statement_compiler    = IngresSQLCompiler
