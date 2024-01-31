@@ -11,7 +11,7 @@ Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2. Current work
   * SQLAlchemy 1.3.16 and 1.4.36
   * Avalanche, Ingres 11.x, Vector 5.1, and Vector 6.x - via ODBC
 
-The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/ActianCorp/ingres_sa_dialect/issues/5)).
+The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/ActianCorp/sqlalchemy-ingres/issues/5)).
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
@@ -32,11 +32,14 @@ Known to work with:
 
 --------------------------------------------------------
 
--   [Quickstart](#quickstart)
--   [Development instructions](#development-instructions)
-    -   [Quick python test](#quick-python-test)
-    -   [Troubleshooting](#troubleshooting)
-    -   [Running SA test suite](#running-sa-test-suite)
+- [Quickstart](#quickstart)
+  * [Install from PyPi](#install-from-pypi)
+  * [Install latest from GitHub, without a source code checkout](#install-latest-from-github--without-a-source-code-checkout)
+  * [Install latest from GitHub, with a source code checkout](#install-latest-from-github--with-a-source-code-checkout)
+- [Development instructions](#development-instructions)
+  * [Quick python test](#quick-python-test)
+  * [Troubleshooting](#troubleshooting)
+  * [Running SA test suite](#running-sa-test-suite)
 
 --------------------------------------------------------
 
@@ -44,11 +47,26 @@ Known to work with:
 
 TL;DR
 
+### Install from PyPi
+
+
+    python -m pip install pyodbc sqlalchemy-ingres
+
+### Install latest from GitHub, without a source code checkout
+
+    python -m pip install -e git+https://github.com/ActianCorp/sqlalchemy-ingres.git
+
+Alternatively, for a `named_branch`:
+
+    python -m pip install -e git+https://github.com/ActianCorp/sqlalchemy-ingres.git@named_branch#egg=sqlalchemy-ingres
+
+### Install latest from GitHub, with a source code checkout
+
 Install/setup:
 
     python -m pip install pyodbc sqlalchemy
-    git clone https://github.com/ActianCorp/ingres_sa_dialect.git
-    cd ingres_sa_dialect
+    git clone https://github.com/ActianCorp/sqlalchemy-ingres.git
+    cd sqlalchemy-ingres
     python -m pip install -e .
 
 
@@ -103,11 +121,11 @@ Ingres dialect tested with pyodbc and pypyodbc (pypyodbc useful for debugging, t
 
 Download Ingres dialect for SQLAlchemy:
 
-    git clone https://github.com/ActianCorp/ingres_sa_dialect.git
+    git clone https://github.com/ActianCorp/sqlalchemy-ingres.git
 
 Setup for dev use:
 
-    cd ingres_sa_dialect
+    cd sqlalchemy-ingres
     python -m pip install -e .
 
 Demo/Test:
@@ -142,15 +160,15 @@ export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
 ```python
 import sys
 import sqlalchemy
-#import ingres_sa_dialect
+#import sqlalchemy-ingres
 
 print('Python %s on %s' % (sys.version, sys.platform))
 print('SQLAlchemy %r' % sqlalchemy.__version__)
 con_str = 'ingres:///demodb'  # local demodb
 #con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
 print(con_str)
-# If the next line is uncommented, need to also uncomment: import ingres_sa_dialect
-#print(ingres_sa_dialect.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
+# If the next line is uncommented, need to also uncomment: import sqlalchemy-ingres
+#print(sqlalchemy-ingres.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
 
 engine = sqlalchemy.create_engine(con_str)
 connection = engine.connect()

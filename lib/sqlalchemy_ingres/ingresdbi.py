@@ -2,14 +2,14 @@
 # Copyright 2009 Ingres Corporation
 #
 # This module is part of SQLAlchemy and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
+# the Apache-2.0 License: https://opensource.org/license/apache-2-0/
 """
 Ingres DB connector for the ingresdbi module, which can be downloaded from
 http://esd.ingres.com.
 """
 from sqlalchemy.engine.default import DefaultExecutionContext
-from ingres_sa_dialect.base import IngresDialect
-from ingres_sa_dialect.base import sqlalchemy_version_tuple
+from sqlalchemy_ingres.base import IngresDialect
+from sqlalchemy_ingres.base import sqlalchemy_version_tuple
 
 class Ingres_ingresdbi(IngresDialect):
     driver = 'ingresdbi'

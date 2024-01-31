@@ -2,15 +2,15 @@
 # Copyright 2020 Actian Corporation
 #
 # This module is part of SQLAlchemy and is released under
-# the MIT License: http://www.opensource.org/licenses/mit-license.php
+# the Apache-2.0 License: https://opensource.org/license/apache-2-0/
 """
 Ingres DB connector for the pyodbc/pypyodbc module
 """
 
 import os
 from sqlalchemy.engine.default import DefaultExecutionContext
-from ingres_sa_dialect.base import IngresDialect
-from ingres_sa_dialect.base import sqlalchemy_version_tuple
+from sqlalchemy_ingres.base import IngresDialect
+from sqlalchemy_ingres.base import sqlalchemy_version_tuple
 
 try:
     ModuleNotFoundError  # Python 3 sanity check
