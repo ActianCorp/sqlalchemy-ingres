@@ -74,7 +74,6 @@ setup(
     extras_require={
         'pyodbc' : ['pyodbc', ],
         'pypyodbc' : ['pypyodbc', ],
-#        'pypyodbc,pyodbc' : ['pypyodbc', 'pyodbc', ],
         'all' : ['pypyodbc', 'pyodbc', ],
     },
 
