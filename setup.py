@@ -71,6 +71,11 @@ setup(
         ],
     platforms='any',  # or distutils.util.get_platform()
     install_requires=['sqlalchemy'],
+    extras_require={
+        'pyodbc' : ['pyodbc', ],
+        'pypyodbc' : ['pypyodbc', ],
+        'all' : ['pypyodbc', 'pyodbc', ],
+    },
 
     entry_points = {                                                
         'sqlalchemy.dialects': [                                    
