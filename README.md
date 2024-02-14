@@ -1,4 +1,4 @@
-Avalanche, Actian X, Ingres, and Vector dialect for [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy) CPython 3.x (and 2.7).
+Actian Data Platform, Actian X, Ingres, and Vector dialect for [SQLAlchemy](https://github.com/sqlalchemy/sqlalchemy) CPython 3.x (and 2.7).
 
 For more information about SQLAlchemy see:
 
@@ -6,18 +6,18 @@ For more information about SQLAlchemy see:
   * https://www.sqlalchemy.org/
   * https://pypi.org/project/SQLAlchemy/
 
-Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2. Current work-in-progress with:
+Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2. Recent work with:
 
-  * SQLAlchemy 1.3.16 and 1.4.36
-  * Avalanche, Ingres 11.x, Vector 5.1, and Vector 6.x - via ODBC
+  * SQLAlchemy 1.4.51 and 2.0.27
+  * Actian Data Platform, Ingres 11.x, Vector 5.x, Vector 6.x - via ODBC
 
 The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/ActianCorp/sqlalchemy-ingres/issues/5)).
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
 ```
-    python -m pip install 'sqlalchemy < 2.0.0'
-    python -m pip install sqlalchemy==1.4.42
+    python -m pip install 'sqlalchemy < 2.0.27'
+    python -m pip install sqlalchemy==1.4.51
  ```
  
 Jython/JDBC support is currently untested, as the current code relies on zxjdbc it is not recommended this be used (see https://hg.sr.ht/~clach04/jyjdbc for as an alternative that includes full Decimal datatype support).
@@ -47,14 +47,16 @@ Known to work with:
 
 TL;DR
 
-### Install from PyPi
+Doc ref: [pip install](https://pip.pypa.io/en/stable/cli/pip_install/)
+
+### Install from PyPi, along with required packages
 
 
-    python -m pip install pyodbc sqlalchemy-ingres
+    python -m pip install sqlalchemy-ingres[all]
 
 ### Install latest from GitHub, without a source code checkout
 
-    python -m pip install -e git+https://github.com/ActianCorp/sqlalchemy-ingres.git
+    python -m pip install -e git+https://github.com/ActianCorp/sqlalchemy-ingres.git#egg=sqlalchemy-ingres
 
 Alternatively, for a `named_branch`:
 
