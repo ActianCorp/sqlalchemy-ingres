@@ -52,7 +52,7 @@ Doc ref: [pip install](https://pip.pypa.io/en/stable/cli/pip_install/)
 ### Install from PyPi, along with required packages
 
 
-    python -m pip install sqlalchemy-ingres[all]
+    python -m pip install "sqlalchemy-ingres[all]"
 
 ### Install latest from GitHub, without a source code checkout
 
