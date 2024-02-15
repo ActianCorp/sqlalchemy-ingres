@@ -5,7 +5,7 @@
 Versions
 --------
 
-This dialect is tested against Actian Avalanche, Actian X 11.1, Vector 6.x,
+This dialect is tested against Actian Data Platform, Actian X 11.x, Vector 6.x,
 and was initially developed with Ingres 9.2.
 Some features may not work on earlier versions.
 The driver used during testing was pyodbc/pypyodbc and ODBC driver, available from esd.actian.com.
