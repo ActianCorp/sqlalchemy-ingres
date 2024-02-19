@@ -376,9 +376,8 @@ class IngresDialect(default.DefaultDialect):
         
         try:
             rs = connection.exec_driver_sql(sqltext, params)
-        
+            
             return [row[0].rstrip() for row in rs.fetchall()]
-
         finally:
             if rs:
                 rs.close()
