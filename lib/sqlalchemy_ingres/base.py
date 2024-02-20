@@ -558,7 +558,7 @@ class IngresDialect(default.DefaultDialect):
         if schema:
             sqltext += """
                 AND table_owner = ?"""
-            params(*params, self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
         else:
             sqltext += """
                 AND table_owner != '$ingres'"""
@@ -596,7 +596,7 @@ class IngresDialect(default.DefaultDialect):
         if schema:
             sqltext += """
                 AND i.index_owner = ?"""
-            params(*params, self.denormalize_name(schema))
+            params = (*params, self.denormalize_name(schema))
             
         sqltext += """
             ORDER BY
