@@ -376,8 +376,10 @@ class IngresDialect(default.DefaultDialect):
         
         try:
             rs = connection.exec_driver_sql(sqltext, params)
-            
-            return [row[0].rstrip() for row in rs.fetchall()]
+
+            cols = [row[0].rstrip() for row in rs.fetchall()]
+            return {"constrained_columns": [] if cols is None else cols, "name": None}
+
         finally:
             if rs:
                 rs.close()
