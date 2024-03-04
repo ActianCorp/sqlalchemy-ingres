@@ -157,12 +157,14 @@ class IngresSQLCompiler(compiler.SQLCompiler):
     def limit_clause(self, select, **kwargs):
         # NOTE this now silently ignores keyword argument 'literal_binds', 'enclosing_alias', 'include_table', etc.
         text = ""
-        
         if not self.is_subquery():
-            if select._offset:
+            if select._offset is not None and select._offset > 0:
                 text += '\nOFFSET %s' % select._offset
-            if select._limit:
-                text += '\nFETCH FIRST %s ROWS ONLY' % select._limit
+            if select._limit is not None and select._limit > 0:
+                if select._offset is not None and select._offset > 0:
+               	    text += '\nFETCH FIRST %s ROWS ONLY' % select._limit
+                else:
+               	    text += '\nLIMIT %s' % select._limit
         return text
     
     def get_select_precolumns(self, select, **kwargs):
@@ -641,7 +643,7 @@ class IngresDialect(default.DefaultDialect):
         if name is None:
             return None
         else:
-            return name.lower().encode('latin1')
+            return name.encode('latin1')
         
     def has_table(self, connection, table_name, schema=None):
         sqltext = """
