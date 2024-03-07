@@ -643,7 +643,7 @@ class IngresDialect(default.DefaultDialect):
         if name is None:
             return None
         else:
-            return name.encode('latin1')
+            return name.lower().encode('latin1')
         
     def has_table(self, connection, table_name, schema=None):
         sqltext = """
