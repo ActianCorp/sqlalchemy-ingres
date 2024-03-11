@@ -39,6 +39,7 @@ else:
 # pick up version number, __version__
 exec(open(os.path.join(os.path.abspath(os.path.dirname(__file__)), 'lib', 'sqlalchemy_ingres', '_version.py')).read())
 
+print("Current version is: %s\n" % __version__)
 
 setup(
     name = "sqlalchemy-ingres",  # note hypen, not underscore
