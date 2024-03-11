@@ -158,10 +158,10 @@ class IngresSQLCompiler(compiler.SQLCompiler):
         # NOTE this now silently ignores keyword argument 'literal_binds', 'enclosing_alias', 'include_table', etc.
         text = ""
         if not self.is_subquery():
-            if select._offset is not None and select._offset > 0:
+            if is_integer_greater_than_zero(select._offset):
                 text += '\nOFFSET %s' % select._offset
-            if select._limit is not None and select._limit > 0:
-                if select._offset is not None and select._offset > 0:
+            if is_integer_greater_than_zero(select._limit):
+                if is_integer_greater_than_zero(select._offset):
                	    text += '\nFETCH FIRST %s ROWS ONLY' % select._limit
                 else:
                	    text += '\nLIMIT %s' % select._limit
@@ -706,3 +706,8 @@ class IngresDialect(default.DefaultDialect):
             if rs:
                 rs.close()
     _get_default_schema_name = get_default_schema_name  # 1.4 API
+
+
+def is_integer_greater_than_zero(check_value):
+    return check_value is not None and check_value > 0
+
