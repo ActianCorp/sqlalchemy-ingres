@@ -6,12 +6,11 @@ For more information about SQLAlchemy see:
   * https://www.sqlalchemy.org/
   * https://pypi.org/project/SQLAlchemy/
 
-Originally developed to work against SQLAlchemy 0.6 and Ingres 9.2. Recent work with:
+The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
   * SQLAlchemy 1.4.51 and 2.0.27
   * Actian Data Platform, Ingres 11.x, Vector 5.x, Vector 6.x - via ODBC
 
-The current Ingres dialect code is built to work with SQLAlchemy version `1.x` and will produce runtime errors if attempting to use it with the forth-coming `2.x` version of SQLAlchemy (for more information see [issue 5](https://github.com/ActianCorp/sqlalchemy-ingres/issues/5)).
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
@@ -162,18 +161,21 @@ export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
 ```python
 import sys
 import sqlalchemy
-#import sqlalchemy-ingres
+#import sqlalchemy_ingres
 
 print('Python %s on %s' % (sys.version, sys.platform))
 print('SQLAlchemy %r' % sqlalchemy.__version__)
+
 con_str = 'ingres:///demodb'  # local demodb
 #con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
 print(con_str)
-# If the next line is uncommented, need to also uncomment: import sqlalchemy-ingres
-#print(sqlalchemy-ingres.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
+
+# If the next line is uncommented, need to also uncomment: import sqlalchemy_ingres
+#print(sqlalchemy_ingres.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
 
 engine = sqlalchemy.create_engine(con_str)
 connection = engine.connect()
+
 query = 'SELECT * FROM iidbconstants'
 for row in connection.execute(sqlalchemy.text(query)):
     print(row)
