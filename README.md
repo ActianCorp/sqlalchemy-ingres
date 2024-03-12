@@ -162,18 +162,21 @@ export ODBCINI=$II_SYSTEM/ingres/files/odbc.ini
 ```python
 import sys
 import sqlalchemy
-#import sqlalchemy-ingres
+#import sqlalchemy_ingres
 
 print('Python %s on %s' % (sys.version, sys.platform))
 print('SQLAlchemy %r' % sqlalchemy.__version__)
+
 con_str = 'ingres:///demodb'  # local demodb
 #con_str = 'ingres://dbuser:PASSWORD@HOSTNAME:27832/db'  # remote database called "db"
 print(con_str)
-# If the next line is uncommented, need to also uncomment: import sqlalchemy-ingres
-#print(sqlalchemy-ingres.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
+
+# If the next line is uncommented, need to also uncomment: import sqlalchemy_ingres
+#print(sqlalchemy_ingres.base.dialect().create_connect_args(url=sqlalchemy.engine.make_url(con_str)))
 
 engine = sqlalchemy.create_engine(con_str)
 connection = engine.connect()
+
 query = 'SELECT * FROM iidbconstants'
 for row in connection.execute(sqlalchemy.text(query)):
     print(row)
