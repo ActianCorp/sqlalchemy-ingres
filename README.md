@@ -6,7 +6,7 @@ For more information about SQLAlchemy see:
   * https://www.sqlalchemy.org/
   * https://pypi.org/project/SQLAlchemy/
 
-The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2 although the current code has been thoroughly tested with these versions:
+The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
   * SQLAlchemy 1.4.51 and 2.0.27
   * Actian Data Platform, Ingres 11.x, Vector 5.x, Vector 6.x - via ODBC
