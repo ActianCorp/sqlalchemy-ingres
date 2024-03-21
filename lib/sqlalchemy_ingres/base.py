@@ -636,14 +636,14 @@ class IngresDialect(default.DefaultDialect):
         if name is None:
             return None
         else:
-            return name.decode('latin1')
+            return name
         
     
     def denormalize_name(self, name):
         if name is None:
             return None
         else:
-            return name.lower().encode('latin1')
+            return name
         
     def has_table(self, connection, table_name, schema=None):
         sqltext = """
