@@ -636,7 +636,7 @@ class IngresDialect(default.DefaultDialect):
         if name is None:
             return None
         else:
-            return name.decode('latin1')
+            return name
         
     
     def denormalize_name(self, name):
