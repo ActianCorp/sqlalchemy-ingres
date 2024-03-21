@@ -78,6 +78,8 @@ ischema_names = {'ANSIDATE': types.Date,
            'TIMESTAMP WITH LOCAL TIME ZONE': types.TIMESTAMP,
            'VARCHAR': types.VARCHAR}
 
+icapabilities = {}
+
 class _IngresBoolean(types.Boolean):
     def get_dbapi_type(self, dbapi):
         return dbapi.TINYINT
@@ -278,8 +280,59 @@ class IngresDialect(default.DefaultDialect):
     # TODO get_isolation_level()
     # TODO _check_max_identifier_length()
 
+    icapabilities = icapabilities
+
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
+
+    def initialize(self, connection):
+        super().initialize(connection)
+        self._load_case_capabilities(connection)
+
+    def _load_case_capabilities(self, connection):
+        sqltext = """
+            SELECT
+                cap_capability,
+                cap_value
+            FROM
+                iidbcapabilities
+            WHERE
+                cap_capability LIKE '%CASE%'"""
+
+        sqltext += """
+            ORDER BY
+                cap_capability"""
+
+        rs = None
+        try:
+            rs = connection.exec_driver_sql(sqltext)
+
+            for row in rs.fetchall():
+                coldata = {}
+                icapabilities[row[0].rstrip()] = row[1].rstrip()
+
+            rs.close()
+        finally:
+            if rs:
+                rs.close()
+
+    def _is_db_delimited_case_lower(self):
+        return icapabilities['DB_DELIMITED_CASE'] == 'LOWER'
+
+    def _is_db_delimited_case_upper(self):
+        return icapabilities['DB_DELIMITED_CASE'] == 'UPPER'
+
+    def _is_db_delimited_case_mixed(self):
+        return icapabilities['DB_DELIMITED_CASE'] == 'MIXED'
+
+    def _is_db_name_case_lower(self):
+        return icapabilities['DB_NAME_CASE'] == 'LOWER'
+
+    def _is_db_name_case_upper(self):
+        return icapabilities['DB_NAME_CASE'] == 'UPPER'
+
+    def _is_db_name_case_mixed(self):
+        return icapabilities['DB_NAME_CASE'] == 'MIXED'
 
     @reflection.cache        
     def get_columns(self, connection, table_name, schema=None, **kw):
@@ -636,15 +689,14 @@ class IngresDialect(default.DefaultDialect):
         if name is None:
             return None
         else:
-            return name.decode('latin1')
+            return name
         
-    
     def denormalize_name(self, name):
         if name is None:
             return None
         else:
-            return name.lower().encode('latin1')
-        
+            return name
+    
     def has_table(self, connection, table_name, schema=None):
         sqltext = """
             SELECT 
