@@ -237,7 +237,10 @@ Run (all) tests:
 ## Known Issues
 
 Apache Superset issue [27427](https://github.com/apache/superset/issues/27427)  
+
 The Apache Superset SQL parser is able to recognize and handle row limiting clauses that use keywords **LIMIT** and **TOP** but does not handle the **FETCH FIRST** clause, which is used by some databases, including Ingres and PostgreSQL.  
+
 If a **FETCH FIRST** clause is used in a SQL statement and the Superset config parameter **SQL_MAX_ROW** is set to a value > 0, the Superset parser appends a **LIMIT** clause to the SQL statement, making it syntactically invalid.  
+
 This errant behavior can be seen when working with SQL statements and table metadata in Superset SQL Lab and may occur in other Superset operations as well.  
 It is important to note that this is a problem with Apache Superset and not with the SQLAlchemy-Ingres connector.
