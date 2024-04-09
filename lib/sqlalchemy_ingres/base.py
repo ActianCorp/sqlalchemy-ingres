@@ -26,11 +26,14 @@ where server is the remote server name, or (LOCAL) if local,
 """
 
 import sqlalchemy
+from typing import TYPE_CHECKING
 from sqlalchemy import types, schema
+from sqlalchemy.engine import cursor as _cursor
 from sqlalchemy.engine import default, reflection
 from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 from sqlalchemy.sql.expression import func
+from sqlalchemy.sql._typing import is_sql_compiler
 
 #sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))  # TODO review - simplistic approach does not handle '1.4.0b1', consider using https://pypi.org/project/version-parser/
 sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.', 2)[0:2]))  # Only care about major and minor
@@ -82,7 +85,7 @@ class _IngresBoolean(types.Boolean):
     def get_dbapi_type(self, dbapi):
         return dbapi.TINYINT
     
-    def result_processor(self, dialect):
+    def result_processor(self, dialect, coltype):
         def process(value):
             if value is None:
                 return None
@@ -213,6 +216,47 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         else:
             return None
 
+    def get_column_specification(self, column, **kwargs):
+
+        if str(column.type) == "VARCHAR":
+            if column.type.length is None:   # If no length is provided for VARCHAR column
+                column.type.length = 255     # Set length to 255
+        
+        colspec = (
+            self.preparer.format_column(column)
+            + " "
+            + self.dialect.type_compiler_instance.process(
+                column.type, type_expression=column
+            )
+        )
+
+        default = self.get_column_default_string(column)
+        if default is not None:
+            colspec += " DEFAULT " + default
+
+        if column.computed is not None:
+            colspec += " " + self.process(column.computed)
+
+        if column.identity is not None:
+            colspec += " " + self.process(column.identity)
+        else:
+            if (
+                column.primary_key
+                and column.autoincrement
+                and column is column.table._autoincrement_column
+                and column.default is None
+            ):
+                colspec += " GENERATED ALWAYS AS IDENTITY"
+
+        if (
+            column.identity is not None
+            or column.primary_key is True
+            or not column.nullable
+            ):
+                colspec += " NOT NULL"
+
+        return colspec
+
     def visit_create_index(self, create):
         text = compiler.DDLCompiler.visit_create_index(self, create)
         index = create.element
@@ -247,6 +291,9 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         return text
     
 class IngresExecutionContext(default.DefaultExecutionContext):
+    _select_lastrowid = False
+    _lastrowid = None
+
     def __init__(self, *args, **kwargs):
         default.DefaultExecutionContext.__init__(self, *args, **kwargs)
         
@@ -254,6 +301,66 @@ class IngresExecutionContext(default.DefaultExecutionContext):
         return self._execute_scalar('SELECT NEXT VALUE FOR %s' \
                                    % self.dialect.identifier_preparer.format_sequence(seq),
                                    type_)
+
+    def pre_exec(self):
+        if self.isinsert:
+            if TYPE_CHECKING:
+                assert is_sql_compiler(self.compiled)
+                assert isinstance(self.compiled.compile_state, DMLState)
+                assert isinstance(
+                    self.compiled.compile_state.dml_table, TableClause
+                )
+
+            tbl = self.compiled.compile_state.dml_table
+            id_column = tbl._autoincrement_column
+
+            if id_column is not None: 
+                insert_has_identity = True
+                compile_state = self.compiled.dml_compile_state
+
+            else:
+                insert_has_identity = False
+
+            self._select_lastrowid = (
+                not self.compiled.inline
+                and insert_has_identity
+                and not self.compiled.effective_returning
+                and not self.executemany
+            )
+
+    def post_exec(self):
+        conn = self.root_connection
+
+        if self.isinsert or self.isupdate or self.isdelete:
+            self._rowcount = self.cursor.rowcount
+
+        if self._select_lastrowid:
+            conn._cursor_execute(
+                self.cursor,
+                "SELECT last_identity() AS lastrowid",
+                (),
+                self,
+            )
+            # fetchall() ensures the cursor is consumed without closing it
+            row = self.cursor.fetchall()[0]
+            self._lastrowid = int(row[0])
+
+            self.cursor_fetch_strategy = _cursor._NO_CURSOR_DML
+        elif (
+            self.compiled is not None
+            and is_sql_compiler(self.compiled)
+            and self.compiled.effective_returning
+        ):
+            self.cursor_fetch_strategy = (
+                _cursor.FullyBufferedCursorFetchStrategy(
+                    self.cursor,
+                    self.cursor.description,
+                    self.cursor.fetchall(),
+                )
+            )
+
+    def get_lastrowid(self):
+        return self._lastrowid
     
 class IngresDialect(default.DefaultDialect):
     name                  = 'ingres'
@@ -266,12 +373,14 @@ class IngresDialect(default.DefaultDialect):
     statement_compiler    = IngresSQLCompiler
     ddl_compiler          = IngresDDLCompiler
     execution_ctx_cls     = IngresExecutionContext
+    supports_identity_columns = True
     supports_sequences    = True
     supports_unicode_statements = True
     supports_unicode_binds = True
     supports_empty_insert = False
+    supports_empty_insert = False
     supports_statement_cache = False  # NOTE this is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
-    postfetch_lastrowid   = False
+    postfetch_lastrowid   = True
     requires_name_normalization = True
     sequences_optional    = False
     _isolation_lookup = isolation_lookup
