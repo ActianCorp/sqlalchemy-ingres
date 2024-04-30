@@ -254,6 +254,11 @@ class IngresDDLCompiler(compiler.DDLCompiler):
             or not column.nullable
             ):
                 colspec += " NOT NULL"
+        else:
+            for x in column.table.constraints:
+                if x.contains_column(column):
+                    colspec += " NOT NULL"
+                    break
 
         return colspec
 
@@ -289,6 +294,7 @@ class IngresDDLCompiler(compiler.DDLCompiler):
                 text += ' ON '
                 text += ", ".join(["%s" % col for col in modify.kwargs['ingres_structure_keys']])
         return text
+
     
 class IngresExecutionContext(default.DefaultExecutionContext):
     _select_lastrowid = False
@@ -389,6 +395,9 @@ class IngresDialect(default.DefaultDialect):
 
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
+
+    def get_isolation_level_values(self, connection):
+        return list(self._isolation_lookup)
 
     @reflection.cache        
     def get_columns(self, connection, table_name, schema=None, **kw):
