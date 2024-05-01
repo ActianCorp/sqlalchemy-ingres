@@ -349,7 +349,8 @@ class IngresExecutionContext(default.DefaultExecutionContext):
             )
             # fetchall() ensures the cursor is consumed without closing it
             row = self.cursor.fetchall()[0]
-            self._lastrowid = int(row[0])
+            if row[0] is not None:
+                self._lastrowid = int(row[0])
 
             self.cursor_fetch_strategy = _cursor._NO_CURSOR_DML
         elif (
