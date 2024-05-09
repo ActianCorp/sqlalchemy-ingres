@@ -387,6 +387,7 @@ class IngresDialect(default.DefaultDialect):
     supports_empty_insert = False
     supports_empty_insert = False
     supports_statement_cache = False  # NOTE this is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
+    supports_schemas = False
     postfetch_lastrowid   = True
     requires_name_normalization = True
     sequences_optional    = False
