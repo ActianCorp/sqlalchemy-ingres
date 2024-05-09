@@ -63,9 +63,9 @@ Added a new flag to .DefaultDialect called supports_schemas; third party dialect
 
 _(The above text about alternate schemas is taken from the following SQLAlchemy GitHub pages)_
 
- [README.unittests.rst](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)
-[changelog_14.rst](https://github.com/sqlalchemy/sqlalchemy/blob/main/doc/build/changelog/changelog_14.rst)
+[README.unittests.rst](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)  
+[changelog_14.rst](https://github.com/sqlalchemy/sqlalchemy/blob/main/doc/build/changelog/changelog_14.rst)  
 
-**Ingres Dialect Behavior**
+**Ingres Dialect Behavior**  
 The Ingres dialect disables the ability to run tests that use alternate schemas with the setting `supports_schemas = False` in class `IngresDialect`.
 
