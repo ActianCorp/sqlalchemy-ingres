@@ -79,8 +79,8 @@ The following text about alternate schemas is taken from these SQLAlchemy GitHub
 > 
 > Added a new flag to .DefaultDialect called supports_schemas; third party dialects may set this flag to False to disable SQLAlchemy's schema-level tests when running the test suite for a > third party dialect.
 
-### Flag added to the Ingres dialect
-Per discussion in [11366](https://github.com/sqlalchemy/sqlalchemy/discussions/11366) and additional research in internal ticket [II-14148](https://actian.atlassian.net/browse/II-14148), the setting `supports_schemas = False` will be added to the IngresDialect class via PR #50 so that when the dialect compliance suite is executed, any tests that use alternate schemas will be skipped.
+### Flag Added to the Ingres Dialect
+Per discussion in [11366](https://github.com/sqlalchemy/sqlalchemy/discussions/11366) and additional research in internal ticket [II-14148](https://actian.atlassian.net/browse/II-14148), the setting `supports_schemas = False` will be added to the IngresDialect class via PR [50](https://github.com/ActianCorp/sqlalchemy-ingres/pull/50) so that when the dialect compliance suite is executed, any tests that use alternate schemas will be skipped.
 
 Example comparison of results before and after adding the setting `supports_schemas = False`
 
