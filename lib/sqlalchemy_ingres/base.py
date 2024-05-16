@@ -474,6 +474,37 @@ class IngresDialect(default.DefaultDialect):
         finally:
             if rs:
                 rs.close()
+
+    @reflection.cache
+    def get_unique_constraints(self, connection, table_name, schema=None, **kw):
+        sqltext = """
+            SELECT
+                k.column_name
+            FROM
+                iikeys k,
+                iiconstraints c
+            WHERE
+                k.constraint_name = c.constraint_name
+            AND c.constraint_type = 'U'
+            AND k.table_name = ?"""
+        params = (self.denormalize_name(table_name),)
+        
+        if schema:
+            sqltext += """
+                AND k.schema_name = ?"""
+            params = (*params, self.denormalize_name(schema))
+        
+        rs = None
+        
+        try:
+            rs = connection.exec_driver_sql(sqltext, params)
+
+            cols = [row[0].rstrip() for row in rs.fetchall()]
+            return {"constrained_columns": [] if cols is None else cols, "name": None}
+
+        finally:
+            if rs:
+                rs.close()
                 
     @reflection.cache
     def get_primary_keys(self, connection, table_name, schema=None, **kw):
