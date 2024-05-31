@@ -1,9 +1,6 @@
 from sqlalchemy.testing.requirements import SuiteRequirements
 
 from sqlalchemy.testing import exclusions
-from sqlalchemy.testing.exclusions import against
-from sqlalchemy.testing.exclusions import only_on
-from sqlalchemy.testing.exclusions import fails_on_everything_except
 
 supported = exclusions.open
 unsupported = exclusions.closed
