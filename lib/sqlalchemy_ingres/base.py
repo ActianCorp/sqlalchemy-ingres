@@ -479,6 +479,7 @@ class IngresDialect(default.DefaultDialect):
     def get_unique_constraints(self, connection, table_name, schema=None, **kw):
         sqltext = """
             SELECT
+                k.constraint_name,
                 k.column_name
             FROM
                 iikeys k,
@@ -495,12 +496,29 @@ class IngresDialect(default.DefaultDialect):
             params = (*params, self.denormalize_name(schema))
         
         rs = None
-        
+
         try:
             rs = connection.exec_driver_sql(sqltext, params)
 
-            cols = [row[0].rstrip() for row in rs.fetchall()]
-            return {"constrained_columns": [] if cols is None else cols, "name": None}
+            constraints = []
+            for row in rs.fetchall():
+                constraint_name = row[0].rstrip()
+                column_name = row[1].rstrip()
+
+                constraint_exists_in_list = False
+                for constraint_dict in constraints:
+                    if constraint_name == constraint_dict['name']:
+                        constraint_dict['column_names'].insert(0, column_name)
+                        constraint_exists_in_list = True
+
+                if not constraint_exists_in_list:
+                    constraint_dict = {
+                            "name" : constraint_name if constraint_name[0] != '$' else None,
+                            "column_names" : [column_name]
+                        }
+                    constraints.append(constraint_dict)
+
+            return constraints
 
         finally:
             if rs:
