@@ -107,11 +107,11 @@ Errors | 798 | 30 | -768
 Skipped | 334 | 855 | +521  
 Run Time | 17m 25s | 42s | -16m 43s  
 
-### ORDER BY Clauses within UNION Clauses
+### UNION Clauses involving SELECT statements containing individual ORDER BY clauses
 
 Several compliance tests FAIL with `Syntax error on '"ORDER'` caused by a generated SQL statement having SELECT queries that individually contain ORDER BY clauses and are involved in a UNION clause. This type of SQL statement is not allowed by Ingres.  See doc [ref](https://docs.actian.com/actianx/12.0/index.html#page/OpenSQLRef/UNION_Clause.htm).
 
-List of known compliance tests that fail due to this issue:
+Known compliance tests that fail due to this issue:
 
     test_select.py
         CompoundSelectTest::test_limit_offset_in_unions_from_alias
