@@ -93,7 +93,7 @@ The following text about alternate schemas is taken from these SQLAlchemy GitHub
 > 
 > Added a new flag to .DefaultDialect called supports_schemas; third party dialects may set this flag to False to disable SQLAlchemy's schema-level tests when running the test suite for a > third party dialect.
 
-### Flag Added to the Ingres Dialect
+#### Flag Added to the Ingres Dialect
 Per discussion in [11366](https://github.com/sqlalchemy/sqlalchemy/discussions/11366) and additional research in internal ticket [II-14148](https://actian.atlassian.net/browse/II-14148), the setting `supports_schemas = False` will be added to the IngresDialect class via PR [50](https://github.com/ActianCorp/sqlalchemy-ingres/pull/50) so that when the dialect compliance suite is executed, any tests that use alternate schemas will be skipped.
 
 Example comparison of results before and after adding the setting `supports_schemas = False`
@@ -106,4 +106,37 @@ Failed | 63 | 173 | +110
 Errors | 798 | 30 | -768  
 Skipped | 334 | 855 | +521  
 Run Time | 17m 25s | 42s | -16m 43s  
+
+### ORDER BY Clauses within UNION Clauses
+
+Several compliance tests FAIL with `Syntax error on '"ORDER'` caused by a generated SQL statement having SELECT queries that individually contain ORDER BY clauses and are involved in a UNION clause. This type of SQL statement is not allowed by Ingres.  See doc [ref](https://docs.actian.com/actianx/12.0/index.html#page/OpenSQLRef/UNION_Clause.htm).
+
+List of known compliance tests that fail due to this issue:
+
+    test_select.py
+        CompoundSelectTest::test_limit_offset_in_unions_from_alias
+        CompoundSelectTest::test_limit_offset_selectable_in_unions
+        CompoundSelectTest::test_order_by_selectable_in_unions
+        CompoundSelectTest::test_limit_offset_aliased_selectable_in_unions
+
+    test_deprecations.py
+        DeprecatedCompoundSelectTest::test_limit_offset_selectable_in_unions
+        DeprecatedCompoundSelectTest::test_order_by_selectable_in_unions
+        DeprecatedCompoundSelectTest::test_limit_offset_aliased_selectable_in_unions
+
+Code example from [test_select.py](https://github.com/sqlalchemy/sqlalchemy/blob/b277e0d501c5d975a8af84e0827dd348ad375acc/lib/sqlalchemy/testing/suite/test_select.py#L928)
+
+    def test_limit_offset_in_unions_from_alias(self):
+        table = self.tables.some_table
+        s1 = select(table).where(table.c.id == 2).limit(1).order_by(table.c.id)
+        s2 = select(table).where(table.c.id == 3).limit(1).order_by(table.c.id)
+        u1 = union(s1, s2).alias()
+
+The SQLAlchemy class method `SQLCompiler::order_by_clause` allows dialects to customize how ORDER BY is rendered for SQL statements. In theory, one could override this method via `IngresSQLCompiler::order_by_clause` to avoid adding the ORDER BY clause to SELECT statements that are subqueries. However, for this method override to be viable, it would also need to know whether the current subquery is involved in a UNION clause, which might not be easy or even possible.
+
+In addition, we probably don't want the Ingres dialect to forcibly exclude the ORDER BY clause from the SQL statement when the application code explicitly specifies using an ORDER BY for a SELECT statement that will be involved in a UNION clause.
+
+Therefore, the proper behavior should probably be what occurs already against Ingres, which is a syntax error informing the user that the ORDER BY clause is not allowed for a SELECT statement involved in a UNION clause.
+
+Internal issue [II-14232](https://actian.atlassian.net/browse/II-14232)
 
