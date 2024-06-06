@@ -93,7 +93,7 @@ The following text about alternate schemas is taken from these SQLAlchemy GitHub
 > 
 > Added a new flag to .DefaultDialect called supports_schemas; third party dialects may set this flag to False to disable SQLAlchemy's schema-level tests when running the test suite for a > third party dialect.
 
-#### Flag Added to the Ingres Dialect
+#### Flag added to the Ingres Dialect
 Per discussion in [11366](https://github.com/sqlalchemy/sqlalchemy/discussions/11366) and additional research in internal ticket [II-14148](https://actian.atlassian.net/browse/II-14148), the setting `supports_schemas = False` will be added to the IngresDialect class via PR [50](https://github.com/ActianCorp/sqlalchemy-ingres/pull/50) so that when the dialect compliance suite is executed, any tests that use alternate schemas will be skipped.
 
 Example comparison of results before and after adding the setting `supports_schemas = False`
@@ -107,7 +107,7 @@ Errors | 798 | 30 | -768
 Skipped | 334 | 855 | +521  
 Run Time | 17m 25s | 42s | -16m 43s  
 
-### UNION Clauses involving SELECT statements containing individual ORDER BY clauses
+### UNION clauses involving SELECT statements containing individual ORDER BY clauses
 
 Several compliance tests FAIL with `Syntax error on '"ORDER'` caused by a generated SQL statement having SELECT queries that individually contain ORDER BY clauses and are involved in a UNION clause. This type of SQL statement is not allowed by Ingres.  See doc [ref](https://docs.actian.com/actianx/12.0/index.html#page/OpenSQLRef/UNION_Clause.htm).
 
