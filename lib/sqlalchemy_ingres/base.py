@@ -203,7 +203,6 @@ class IngresDDLCompiler(compiler.DDLCompiler):
     
     def get_column_default_string(self, column):
         """
-        import pdb ; pdb.set_trace()
         if isinstance(column.server_default, schema.DefaultClause):
             if isinstance(column.server_default.arg, basestring):
                 return "'%s'" % column.server_default.arg
@@ -251,14 +250,23 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         if (
             column.identity is not None
             or column.primary_key is True
+            or column.unique is True
             or not column.nullable
             ):
                 colspec += " NOT NULL"
         else:
-            for x in column.table.constraints:
-                if x.contains_column(column):
-                    colspec += " NOT NULL"
-                    break
+            for constraint in column.table.constraints:
+                if constraint.contains_column(column):  # Maybe redundant since checked again in for loop
+                    for constraint_column in constraint:
+                        if constraint_column == column:
+                            if (
+                                constraint_column.nullable is False
+                                or constraint_column.unique is True
+                                or constraint_column.primary_key is True
+                                or isinstance(constraint, sqlalchemy.sql.schema.UniqueConstraint)
+                            ):
+                                colspec += " NOT NULL"
+                                break
 
         return colspec
 
