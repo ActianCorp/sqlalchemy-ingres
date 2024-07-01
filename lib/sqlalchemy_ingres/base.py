@@ -81,6 +81,8 @@ ischema_names = {'ANSIDATE': types.Date,
            'TIMESTAMP WITH LOCAL TIME ZONE': types.TIMESTAMP,
            'VARCHAR': types.VARCHAR}
 
+iidbcapabilities = {}
+
 class _IngresBoolean(types.Boolean):
     def get_dbapi_type(self, dbapi):
         return dbapi.TINYINT
@@ -251,15 +253,28 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         if (
             column.identity is not None
             or column.primary_key is True
+            or column.unique is True
             or not column.nullable
             ):
                 colspec += " NOT NULL"
         else:
-            for x in column.table.constraints:
-                if x.contains_column(column):
-                    colspec += " NOT NULL"
-                    break
-
+            # For columns specified as unique:
+            #  - If table is Ingres, column cannot be nullable
+            #  - If table is X100, column can be nullable
+            # https://docs.actian.com/actianx/12.0/index.html#page/SQLRef/Constraints.htm#ww124554
+            for constraint in column.table.constraints:
+                if constraint.contains_column(column):  # Maybe redundant since checked again in for loop
+                    for constraint_column in constraint:
+                        if constraint_column == column:
+                            if (
+                                constraint_column.nullable is False
+                                or constraint_column.unique is True
+                                or constraint_column.primary_key is True
+                                or isinstance(constraint, sqlalchemy.sql.schema.UniqueConstraint)
+                            ):
+                                if iidbcapabilities['DBMS_TYPE'] == 'INGRES':
+                                    colspec += " NOT NULL"
+                                    break
         return colspec
 
     def visit_create_index(self, create):
@@ -375,6 +390,7 @@ class IngresDialect(default.DefaultDialect):
     max_identifier_length = 32  # FIXME review
     colspecs              = colspecs
     ischema_names         = ischema_names
+    iidbcapabilities      = iidbcapabilities
     statement_compiler    = IngresSQLCompiler
     type_compiler         = IngresTypeCompiler
     statement_compiler    = IngresSQLCompiler
@@ -397,6 +413,31 @@ class IngresDialect(default.DefaultDialect):
 
     def __init__(self, **kwargs):
         default.DefaultDialect.__init__(self, **kwargs)
+
+    def initialize(self, connection):
+        super().initialize(connection)
+        self._load_iidbcapabilities(connection)
+
+    def _load_iidbcapabilities(self, connection):
+        sqltext = """
+            SELECT
+                cap_capability,
+                cap_value
+            FROM
+                iidbcapabilities"""
+
+        rs = None
+        try:
+            rs = connection.exec_driver_sql(sqltext)
+
+            for row in rs.fetchall():
+                coldata = {}
+                iidbcapabilities[row[0].rstrip()] = row[1].rstrip()
+
+            rs.close()
+        finally:
+            if rs:
+                rs.close()
 
     def get_isolation_level_values(self, connection):
         return list(self._isolation_lookup)
