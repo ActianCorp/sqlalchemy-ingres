@@ -81,8 +81,6 @@ ischema_names = {'ANSIDATE': types.Date,
            'TIMESTAMP WITH LOCAL TIME ZONE': types.TIMESTAMP,
            'VARCHAR': types.VARCHAR}
 
-iidbcapabilities = {}
-
 class _IngresBoolean(types.Boolean):
     def get_dbapi_type(self, dbapi):
         return dbapi.TINYINT
@@ -272,7 +270,7 @@ class IngresDDLCompiler(compiler.DDLCompiler):
                                 or constraint_column.primary_key is True
                                 or isinstance(constraint, sqlalchemy.sql.schema.UniqueConstraint)
                             ):
-                                if iidbcapabilities['DBMS_TYPE'] == 'INGRES':
+                                if self.dialect.iidbcapabilities['DBMS_TYPE'] == 'INGRES':
                                     colspec += " NOT NULL"
                                     break
         return colspec
@@ -390,7 +388,6 @@ class IngresDialect(default.DefaultDialect):
     max_identifier_length = 32  # FIXME review
     colspecs              = colspecs
     ischema_names         = ischema_names
-    iidbcapabilities      = iidbcapabilities
     statement_compiler    = IngresSQLCompiler
     type_compiler         = IngresTypeCompiler
     statement_compiler    = IngresSQLCompiler
@@ -408,6 +405,7 @@ class IngresDialect(default.DefaultDialect):
     requires_name_normalization = True
     sequences_optional    = False
     _isolation_lookup = isolation_lookup
+    iidbcapabilities      = None
     # TODO get_isolation_level()
     # TODO _check_max_identifier_length()
 
@@ -429,10 +427,10 @@ class IngresDialect(default.DefaultDialect):
         rs = None
         try:
             rs = connection.exec_driver_sql(sqltext)
-
+            self.iidbcapabilities = {}
             for row in rs.fetchall():
                 coldata = {}
-                iidbcapabilities[row[0].rstrip()] = row[1].rstrip()
+                self.iidbcapabilities[row[0].rstrip()] = row[1].rstrip()
 
             rs.close()
         finally:
