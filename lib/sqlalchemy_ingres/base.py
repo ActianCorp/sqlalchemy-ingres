@@ -802,6 +802,7 @@ class IngresDialect(default.DefaultDialect):
             WHERE
                 i.index_name = c.index_name
             AND i.index_owner = c.index_owner
+            AND i.system_use = 'U'
             AND i.base_name = ?"""
         params = (self.denormalize_name(table_name),)
         
