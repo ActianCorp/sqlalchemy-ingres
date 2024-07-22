@@ -804,6 +804,11 @@ class IngresDialect(default.DefaultDialect):
             AND i.index_owner = c.index_owner
             AND i.base_name = ?"""
         params = (self.denormalize_name(table_name),)
+
+        if (connection.get_execution_options().get('inspect_indexes') is None or
+            connection.get_execution_options().get('inspect_indexes').upper() != "ALL"):
+                sqltext += """
+                    AND i.system_use = 'U'"""
         
         if schema:
             sqltext += """
@@ -816,7 +821,7 @@ class IngresDialect(default.DefaultDialect):
                 
         rs = None
         indexes = {}
-        
+
         try:
             rs = connection.exec_driver_sql(sqltext, params)
             
