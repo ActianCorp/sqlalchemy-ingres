@@ -401,6 +401,7 @@ class IngresDialect(default.DefaultDialect):
     supports_empty_insert = False
     supports_statement_cache = False  # NOTE this is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
     supports_schemas = False  # see README.testsuite.md for details
+    supports_comments = True
     postfetch_lastrowid   = True
     requires_name_normalization = True
     sequences_optional    = False
@@ -440,6 +441,32 @@ class IngresDialect(default.DefaultDialect):
     def get_isolation_level_values(self, connection):
         return list(self._isolation_lookup)
 
+    def _get_column_comment(self, connection, table_name, column_name, schema=None):
+        sqltext = """
+            SELECT
+                long_remark
+            FROM
+                iidb_subcomments
+            WHERE
+                object_name = ?
+                AND subobject_name = ?"""
+        params = (self.denormalize_name(table_name),self.denormalize_name(column_name),)
+        
+        if schema:
+            sqltext += """
+                AND table_owner = ?"""
+            params = (*params, self.denormalize_name(schema))
+            
+        rs = None
+        try:
+            rs = connection.exec_driver_sql(sqltext, params)
+            row = rs.fetchone()
+            if (row is not None):
+                return row[0]
+        finally:
+            if rs:
+                rs.close()
+
     @reflection.cache        
     def get_columns(self, connection, table_name, schema=None, **kw):
         sqltext = """
@@ -449,7 +476,9 @@ class IngresDialect(default.DefaultDialect):
                 column_nulls,
                 column_default_val,
                 column_length,
-                column_scale
+                column_scale,
+                column_always_ident,
+                column_bydefault_ident
             FROM
                 iicolumns
             WHERE
@@ -505,7 +534,10 @@ class IngresDialect(default.DefaultDialect):
                     coldata['type'] = ischema_names[coltype](precision, scale)
                 else:
                     coldata['type'] = ischema_names[coltype]
-                
+                coldata['autoincrement'] = (row[6] == 'Y' or row[7] == 'Y')
+
+                coldata['comment'] = self._get_column_comment(connection, table_name, coldata['name'], schema)
+
                 columns.append(coldata)
                 
             rs.close()
