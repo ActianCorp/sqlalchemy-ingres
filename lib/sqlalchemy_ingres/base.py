@@ -534,6 +534,7 @@ class IngresDialect(default.DefaultDialect):
                     coldata['type'] = ischema_names[coltype](precision, scale)
                 else:
                     coldata['type'] = ischema_names[coltype]
+                # Check values for column_always_ident, column_bydefault_ident
                 coldata['autoincrement'] = (row[6] == 'Y' or row[7] == 'Y')
 
                 coldata['comment'] = self._get_column_comment(connection, table_name, coldata['name'], schema)
