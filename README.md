@@ -8,14 +8,14 @@ For more information about SQLAlchemy see:
 
 The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
-  * SQLAlchemy 1.4.51 and 2.0.27
-  * Actian Data Platform, Ingres 11.x, Vector 5.x, Vector 6.x - via ODBC
+  * SQLAlchemy 1.4.51 and 2.0.30
+  * Actian Data Platform, Ingres 11.x & 12.x, Vector 5.x & 6.x - via ODBC
 
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
 ```
-    python -m pip install 'sqlalchemy < 2.0.27'
+    python -m pip install 'sqlalchemy < 2.0.30'
     python -m pip install sqlalchemy==1.4.51
  ```
  
