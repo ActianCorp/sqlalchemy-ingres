@@ -262,11 +262,11 @@ The errant behavior can be seen when working with SQL statements and table metad
 
 It is important to note that this is a problem with Apache Superset and not with the SQLAlchemy-Ingres connector.
 
-### Reflection of constraint objects does not include metadata for attributes referential_actions and enforce_options
+### Reflection of constraint metadata does not include attributes referential_actions and enforce_option
 
-Actian databases provide optional clauses for specifying _referential_actions_ and _enforce_options_ when defining table-level or column-level constraints.
+Actian databases provide optional clauses for specifying _referential_actions_ and _enforce_option_ when defining table-level or column-level constraints.
 
-#### Examples:
+#### Clauses from [doc](https://docs.actian.com/actianx/12.0/index.html#page/SQLRef/Constraints.htm):
 
 #### referential_actions
 - ON UPDATE CASCADE
@@ -277,7 +277,7 @@ Actian databases provide optional clauses for specifying _referential_actions_ a
 - RESTRICT
 - SET NULL
 
-#### enforce_options
+#### enforce_option
 - NOT ENFORCED
 - ENFORCED
 
