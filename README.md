@@ -250,9 +250,9 @@ Example:
 
 Documentation reference [iiindexes catalog](https://docs.actian.com/actianx/12.0/index.html#page/DatabaseAdmin/Standard_Catalogs_for_All_Databases.htm#ww1029558)
 
-## Known Issues
+## Known Issues and Limitations
 
-Apache Superset issue [27427](https://github.com/apache/superset/issues/27427)  
+### Apache Superset issue [27427](https://github.com/apache/superset/issues/27427)  
 
 The Apache Superset SQL parser is able to recognize and handle row limiting clauses that use keywords **LIMIT** and **TOP** but does not handle the **FETCH FIRST** clause, which is used by some databases, including Ingres and PostgreSQL.  
 
@@ -261,3 +261,24 @@ If a **FETCH FIRST** clause is used in a SQL statement and the Superset config p
 The errant behavior can be seen when working with SQL statements and table metadata in Superset SQL Lab and may occur in other Superset operations as well.  
 
 It is important to note that this is a problem with Apache Superset and not with the SQLAlchemy-Ingres connector.
+
+### Reflection of constraint objects does not include metadata for attributes referential_actions and enforce_options
+
+Actian databases provide optional clauses for specifying _referential_actions_ and _enforce_options_ when defining table-level or column-level constraints.
+
+#### Examples:
+
+#### referential_actions
+- ON UPDATE CASCADE
+- ON UPDATE {RESTRICT | NO ACTION }
+- ON DELETE CASCADE
+- ON DELETE {RESTRICT | NO ACTION }
+- NO ACTION
+- RESTRICT
+- SET NULL
+
+#### enforce_options
+- NOT ENFORCED
+- ENFORCED
+
+When reflecting objects with constraints that are defined having these optional clauses, the returned metadata does not include information on these attributes.
