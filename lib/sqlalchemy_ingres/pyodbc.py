@@ -53,7 +53,9 @@ class Ingres_pyodbc(IngresDialect):
 
         conn_list = []
         conn_list.append('Driver={' + driver_name + '}')  # FIXME using concat for now
-        conn_list.append('Database=' + url.database)
+        if url.database:
+            # database may not be needed for dialect operations without a database connnection
+            conn_list.append('Database=' + url.database)
         if not url.host:
             conn_list.append('Server=(local)')
         else:
