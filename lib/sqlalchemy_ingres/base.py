@@ -26,14 +26,12 @@ where server is the remote server name, or (LOCAL) if local,
 """
 
 import sqlalchemy
-from typing import TYPE_CHECKING
 from sqlalchemy import types, schema
 from sqlalchemy.engine import cursor as _cursor
 from sqlalchemy.engine import default, reflection
 from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 from sqlalchemy.sql.expression import func
-from sqlalchemy.sql._typing import is_sql_compiler
 
 #sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))  # TODO review - simplistic approach does not handle '1.4.0b1', consider using https://pypi.org/project/version-parser/
 sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.', 2)[0:2]))  # Only care about major and minor
@@ -221,14 +219,23 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         if str(column.type) == "VARCHAR":
             if column.type.length is None:   # If no length is provided for VARCHAR column
                 column.type.length = 255     # Set length to 255
-        
-        colspec = (
-            self.preparer.format_column(column)
-            + " "
-            + self.dialect.type_compiler_instance.process(
-                column.type, type_expression=column
+
+        if (sqlalchemy_version_tuple >= (2,0)):
+            colspec = (
+                self.preparer.format_column(column)
+                + " "
+                + self.dialect.type_compiler_instance.process(
+                    column.type, type_expression=column
+                )
             )
-        )
+        else:
+            colspec = (
+                self.preparer.format_column(column)
+                + " "
+                + self.dialect.type_compiler.process(
+                    column.type, type_expression=column
+                )
+            )
 
         default = self.get_column_default_string(column)
         if default is not None:
@@ -323,12 +330,15 @@ class IngresExecutionContext(default.DefaultExecutionContext):
 
     def pre_exec(self):
         if self.isinsert:
-            if TYPE_CHECKING:
-                assert is_sql_compiler(self.compiled)
-                assert isinstance(self.compiled.compile_state, DMLState)
-                assert isinstance(
-                    self.compiled.compile_state.dml_table, TableClause
-                )
+            if (sqlalchemy_version_tuple >= (2,0)):
+                from typing import TYPE_CHECKING
+                from sqlalchemy.sql._typing import is_sql_compiler
+                if TYPE_CHECKING:
+                    assert is_sql_compiler(self.compiled)
+                    assert isinstance(self.compiled.compile_state, DMLState)
+                    assert isinstance(
+                        self.compiled.compile_state.dml_table, TableClause
+                    )
 
             tbl = self.compiled.compile_state.dml_table
             id_column = tbl._autoincrement_column
@@ -343,11 +353,17 @@ class IngresExecutionContext(default.DefaultExecutionContext):
             self._select_lastrowid = (
                 not self.compiled.inline
                 and insert_has_identity
-                and not self.compiled.effective_returning
                 and not self.executemany
+                and not (
+                    self.compiled.effective_returning
+                    if sqlalchemy_version_tuple >= (2,0)
+                    else self.compiled.returning)
             )
 
     def post_exec(self):
+        if (sqlalchemy_version_tuple >= (2,0)):
+            from sqlalchemy.sql._typing import is_sql_compiler
+
         conn = self.root_connection
 
         if self.isinsert or self.isupdate or self.isdelete:
@@ -366,18 +382,21 @@ class IngresExecutionContext(default.DefaultExecutionContext):
                 self._lastrowid = int(row[0])
 
             self.cursor_fetch_strategy = _cursor._NO_CURSOR_DML
-        elif (
-            self.compiled is not None
-            and is_sql_compiler(self.compiled)
-            and self.compiled.effective_returning
-        ):
-            self.cursor_fetch_strategy = (
-                _cursor.FullyBufferedCursorFetchStrategy(
-                    self.cursor,
-                    self.cursor.description,
-                    self.cursor.fetchall(),
+        elif self.compiled is not None:
+            if (
+                sqlalchemy_version_tuple >= (2,0)
+                and is_sql_compiler(self.compiled)
+                and self.compiled.effective_returning
+                or ((self.isinsert or self.isupdate or self.isdelete)
+                    and self.compiled.returning)
+            ):
+                self.cursor_fetch_strategy = (
+                    _cursor.FullyBufferedCursorFetchStrategy(
+                        self.cursor,
+                        self.cursor.description,
+                        self.cursor.fetchall(),
+                    )
                 )
-            )
 
     def get_lastrowid(self):
         return self._lastrowid
@@ -946,7 +965,7 @@ class IngresDialect(default.DefaultDialect):
                 rs = connection.execute(func.dbmsinfo('username'))
             else:
                 sqltext = """SELECT dbmsinfo('username')"""
-                rs = connection.execute(sqltext)
+                rs = connection.exec_driver_sql(sqltext)
             return rs.fetchone()[0]
         finally:
             if rs:
