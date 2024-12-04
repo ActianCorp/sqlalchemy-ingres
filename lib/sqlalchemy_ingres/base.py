@@ -32,6 +32,13 @@ from sqlalchemy.engine import default, reflection
 from sqlalchemy.schema import DDLElement
 from sqlalchemy.sql import compiler
 from sqlalchemy.sql.expression import func
+from typing import TYPE_CHECKING
+
+try:
+    from sqlalchemy.sql._typing import is_sql_compiler
+except ImportError:
+    is_sql_compiler = None
+
 
 #sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.')))  # TODO review - simplistic approach does not handle '1.4.0b1', consider using https://pypi.org/project/version-parser/
 sqlalchemy_version_tuple = tuple(map(int, sqlalchemy.__version__.split('.', 2)[0:2]))  # Only care about major and minor
@@ -219,8 +226,8 @@ class IngresDDLCompiler(compiler.DDLCompiler):
         if str(column.type) == "VARCHAR":
             if column.type.length is None:   # If no length is provided for VARCHAR column
                 column.type.length = 255     # Set length to 255
-
-        if (sqlalchemy_version_tuple >= (2,0)):
+       
+        if (sqlalchemy_version_tuple >= (2, 0)): 
             colspec = (
                 self.preparer.format_column(column)
                 + " "
@@ -330,15 +337,11 @@ class IngresExecutionContext(default.DefaultExecutionContext):
 
     def pre_exec(self):
         if self.isinsert:
-            if (sqlalchemy_version_tuple >= (2,0)):
-                from typing import TYPE_CHECKING
-                from sqlalchemy.sql._typing import is_sql_compiler
-                if TYPE_CHECKING:
+            if TYPE_CHECKING:
+                if is_sql_compiler:
                     assert is_sql_compiler(self.compiled)
-                    assert isinstance(self.compiled.compile_state, DMLState)
-                    assert isinstance(
-                        self.compiled.compile_state.dml_table, TableClause
-                    )
+                assert isinstance(self.compiled.compile_state, DMLState)
+                assert isinstance(self.compiled.compile_state.dml_table, TableClause)
 
             tbl = self.compiled.compile_state.dml_table
             id_column = tbl._autoincrement_column
@@ -356,14 +359,11 @@ class IngresExecutionContext(default.DefaultExecutionContext):
                 and not self.executemany
                 and not (
                     self.compiled.effective_returning
-                    if sqlalchemy_version_tuple >= (2,0)
+                    if sqlalchemy_version_tuple >= (2, 0)
                     else self.compiled.returning)
             )
 
     def post_exec(self):
-        if (sqlalchemy_version_tuple >= (2,0)):
-            from sqlalchemy.sql._typing import is_sql_compiler
-
         conn = self.root_connection
 
         if self.isinsert or self.isupdate or self.isdelete:
@@ -384,8 +384,8 @@ class IngresExecutionContext(default.DefaultExecutionContext):
             self.cursor_fetch_strategy = _cursor._NO_CURSOR_DML
         elif self.compiled is not None:
             if (
-                sqlalchemy_version_tuple >= (2,0)
-                and is_sql_compiler(self.compiled)
+                sqlalchemy_version_tuple >= (2, 0)
+                and (is_sql_compiler(self.compiled) if is_sql_compiler else True)
                 and self.compiled.effective_returning
                 or ((self.isinsert or self.isupdate or self.isdelete)
                     and self.compiled.returning)
@@ -961,7 +961,7 @@ class IngresDialect(default.DefaultDialect):
     def get_default_schema_name(self, connection):
         rs = None
         try:
-            if (sqlalchemy_version_tuple >= (2,0)):
+            if (sqlalchemy_version_tuple >= (2, 0)):
                 rs = connection.execute(func.dbmsinfo('username'))
             else:
                 sqltext = """SELECT dbmsinfo('username')"""
