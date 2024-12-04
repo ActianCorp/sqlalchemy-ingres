@@ -235,7 +235,7 @@ class IngresDDLCompiler(compiler.DDLCompiler):
                     column.type, type_expression=column
                 )
             )
-        else:
+        else:   # SQLAlchemy v1.x path
             colspec = (
                 self.preparer.format_column(column)
                 + " "
