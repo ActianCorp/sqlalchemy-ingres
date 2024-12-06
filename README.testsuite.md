@@ -1,3 +1,24 @@
+# Introduction
+
+The SQLAlchemy GitHub repository contains two test suites:
+
+ - **Dialect Compliance Suite**
+     - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst)
+     - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite)
+
+ - **Unit Tests**
+     - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)
+     - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/test)
+
+The dialect compliance suite was initially added to SQLAlchemy version 0.8 in 2012 via commit [568de1e](https://github.com/sqlalchemy/sqlalchemy/blob/568de1ef4941dcf366d81ebb46e122f4a973d15a/README.dialects.rst).
+
+In order to run the dialect compliance suite, it is necessary that dialects have a `requirements.py`. A `requirements.py` file was added to SQLAlchemy Ingres connector 0.0.7 in May 2024 via PR [49](https://github.com/ActianCorp/sqlalchemy-ingres/pull/49).
+
+The SQLAlchemy unit tests are separate from the dialect compliance suite. The number of tests varies depending on the exact version of SQLAlchemy. For recent releases of SQLAlchemy 2.x, there are over 30K unit tests while the dialect compliance suite contains fewer than 2K tests.
+
+In PR [42](https://github.com/ActianCorp/sqlalchemy-ingres/pull/42), changes were made to the SQLAlchemy Ingres connector that included new import statements. These changes broke compatibility with SQLAlchemy 1.4. PR [69](https://github.com/ActianCorp/sqlalchemy-ingres/pull/69) fixed this problem so that the Ingres connector once again works with SQLAlchemy 1.x, retains compatibility with SQLAlchemy 2.x, and is able to run the SQLAlchemy dialect compliance suite and the unit tests for SQLAlchemy versions 1.x and 2.x.
+
+
 # SQLAlchemy Dialect Compliance Suite
 ## Overview and Setup
 
@@ -139,4 +160,33 @@ In addition, we probably don't want the Ingres dialect to forcibly exclude the O
 Therefore, the proper behavior should probably be what occurs already against Ingres, which is a syntax error informing the user that the ORDER BY clause is not allowed for a SELECT statement involved in a UNION clause.
 
 Internal issue [II-14232](https://actian.atlassian.net/browse/II-14232)
+
+
+# SQLAlchemy Unit Tests
+
+The SQLAlchemy unit tests are found in this [folder](https://github.com/sqlalchemy/sqlalchemy/tree/main/test).
+
+Instructions for running the unit tests are [here](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst).
+
+## Quick Instructions for Windows
+
+Example of how to set up and run the full unit tests of the latest SQLAlchemy default branch.
+The example assumes a local Ingres instance is running and contains a database called `testdb`.
+
+    C:\test> python -m venv .venv
+    C:\test> .\.venv\Scripts\activate.bat
+    C:\test> python -m pip install --upgrade pip pytest mock tox pyodbc pypyodbc sqlalchemy-ingres
+
+    C:\test> git clone https://github.com/sqlalchemy/sqlalchemy.git
+    C:\test> python -m pip install -e sqlalchemy
+
+    C:\test> cd sqlalchemy
+
+    C:\test\sqlalchemy> cat test.cfg   (Need to have first created this file using your favorite editor)
+    [db]
+    ingres_odbc=ingres:///testdb
+
+    C:\test\sqlalchemy> set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II   (Use appropriate ODBC driver)
+
+    C:\test\sqlalchemy> pytest --maxfail=100 --db ingres_odbc .\test
 
