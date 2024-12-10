@@ -170,10 +170,7 @@ class IngresTypeCompiler(compiler.GenericTypeCompiler):
         elif type_.scale is None:
             return "DECIMAL(%(precision)s)" % {"precision": type_.precision}
         else:
-            return "DECIMAL(%(precision)s, %(scale)s)" % {
-                "precision": type_.precision,
-                "scale": type_.scale,
-            }
+            return "DECIMAL(%(precision)s, %(scale)s)" % {"precision": type_.precision, "scale": type_.scale}
 
     def visit_unicode(self, type_):
         return self.visit_NVARCHAR(type_)
@@ -223,6 +220,7 @@ class _Modify(DDLElement):
 
 
 class IngresDDLCompiler(compiler.DDLCompiler):
+
     def visit_drop_constraint(self, drop):
         table = drop.element.table
         constr = drop.element
@@ -248,27 +246,22 @@ class IngresDDLCompiler(compiler.DDLCompiler):
             return None
 
     def get_column_specification(self, column, **kwargs):
+
         if str(column.type) == "VARCHAR":
-            if (
-                column.type.length is None
-            ):  # If no length is provided for VARCHAR column
+            if column.type.length is None:  # If no length is provided for VARCHAR column
                 column.type.length = 255  # Set length to 255
 
         if sqlalchemy_version_tuple >= (2, 0):
             colspec = (
                 self.preparer.format_column(column)
                 + " "
-                + self.dialect.type_compiler_instance.process(
-                    column.type, type_expression=column
-                )
+                + self.dialect.type_compiler_instance.process(column.type, type_expression=column)
             )
         else:  # SQLAlchemy v1.x path
             colspec = (
                 self.preparer.format_column(column)
                 + " "
-                + self.dialect.type_compiler.process(
-                    column.type, type_expression=column
-                )
+                + self.dialect.type_compiler.process(column.type, type_expression=column)
             )
 
         default = self.get_column_default_string(column)
@@ -297,31 +290,21 @@ class IngresDDLCompiler(compiler.DDLCompiler):
             column.identity is not None
             or column.primary_key is True
             or not column.nullable
-            or (
-                column.unique is True
-                and self.dialect.iidbcapabilities["DBMS_TYPE"] == "INGRES"
-            )
+            or (column.unique is True and self.dialect.iidbcapabilities["DBMS_TYPE"] == "INGRES")
         ):
             colspec += " NOT NULL"
         else:
             for constraint in column.table.constraints:
-                if constraint.contains_column(
-                    column
-                ):  # Maybe redundant since checked again in for loop
+                if constraint.contains_column(column):  # Maybe redundant since checked again in for loop
                     for constraint_column in constraint:
                         if constraint_column == column:
                             if (
                                 constraint_column.nullable is False
                                 or constraint_column.unique is True
                                 or constraint_column.primary_key is True
-                                or isinstance(
-                                    constraint, sqlalchemy.sql.schema.UniqueConstraint
-                                )
+                                or isinstance(constraint, sqlalchemy.sql.schema.UniqueConstraint)
                             ):
-                                if (
-                                    self.dialect.iidbcapabilities["DBMS_TYPE"]
-                                    == "INGRES"
-                                ):
+                                if self.dialect.iidbcapabilities["DBMS_TYPE"] == "INGRES":
                                     colspec += " NOT NULL"
                                     break
         return colspec
@@ -338,9 +321,7 @@ class IngresDDLCompiler(compiler.DDLCompiler):
                 ):
                     text += " UNIQUE "
                 text += " ON "
-                text += ", ".join(
-                    ["%s" % col for col in index.kwargs["ingres_structure_keys"]]
-                )
+                text += ", ".join(["%s" % col for col in index.kwargs["ingres_structure_keys"]])
 
         return text
 
@@ -361,9 +342,7 @@ class IngresDDLCompiler(compiler.DDLCompiler):
                 ):
                     text += " UNIQUE "
                 text += " ON "
-                text += ", ".join(
-                    ["%s" % col for col in modify.kwargs["ingres_structure_keys"]]
-                )
+                text += ", ".join(["%s" % col for col in modify.kwargs["ingres_structure_keys"]])
         return text
 
 
@@ -376,9 +355,7 @@ class IngresExecutionContext(default.DefaultExecutionContext):
 
     def fire_sequence(self, seq, type_):
         return self._execute_scalar(
-            "SELECT NEXT VALUE FOR %s"
-            % self.dialect.identifier_preparer.format_sequence(seq),
-            type_,
+            "SELECT NEXT VALUE FOR %s" % self.dialect.identifier_preparer.format_sequence(seq), type_
         )
 
     def pre_exec(self):
@@ -433,10 +410,7 @@ class IngresExecutionContext(default.DefaultExecutionContext):
                 sqlalchemy_version_tuple >= (2, 0)
                 and (is_sql_compiler(self.compiled) if is_sql_compiler else True)
                 and self.compiled.effective_returning
-                or (
-                    (self.isinsert or self.isupdate or self.isdelete)
-                    and self.compiled.returning
-                )
+                or ((self.isinsert or self.isupdate or self.isdelete) and self.compiled.returning)
             ):
                 self.cursor_fetch_strategy = _cursor.FullyBufferedCursorFetchStrategy(
                     self.cursor,
@@ -607,9 +581,7 @@ class IngresDialect(default.DefaultDialect):
                 # Check values for column_always_ident, column_bydefault_ident
                 coldata["autoincrement"] = row[6] == "Y" or row[7] == "Y"
 
-                coldata["comment"] = self._get_column_comment(
-                    connection, table_name, coldata["name"], schema
-                )
+                coldata["comment"] = self._get_column_comment(connection, table_name, coldata["name"], schema)
 
                 columns.append(coldata)
 
@@ -912,8 +884,7 @@ class IngresDialect(default.DefaultDialect):
 
         if (
             connection.get_execution_options().get("inspect_indexes") is None
-            or connection.get_execution_options().get("inspect_indexes").upper()
-            != "ALL"
+            or connection.get_execution_options().get("inspect_indexes").upper() != "ALL"
         ):
             sqltext += """
                 AND i.system_use = 'U'"""
