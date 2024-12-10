@@ -11,27 +11,32 @@ from sqlalchemy.engine.default import DefaultExecutionContext
 from sqlalchemy_ingres.base import IngresDialect
 from sqlalchemy_ingres.base import sqlalchemy_version_tuple
 
+
 class Ingres_ingresdbi(IngresDialect):
-    driver = 'ingresdbi'
+    driver = "ingresdbi"
     supports_statement_cache = False  # NOTE `IngresDialect.supports_statement_cache` is not actually picked up by SA warning code, _generate_cache_attrs() checks dict of subclass, not the entire class
 
     def __init__(self, **kwargs):
         IngresDialect.__init__(self, **kwargs)
 
-    if (sqlalchemy_version_tuple >= (2,0)):
+    if sqlalchemy_version_tuple >= (2, 0):
+
         @classmethod
         def import_dbapi(cls):
-            return __import__('ingresdbi')
+            return __import__("ingresdbi")
+
     else:
+
         @classmethod
         def dbapi(cls):
-            return __import__('ingresdbi')
+            return __import__("ingresdbi")
 
     def create_connect_args(self, url):
-        opts = url.translate_connect_args(username='uid', password='pwd', host='vnode')
+        opts = url.translate_connect_args(username="uid", password="pwd", host="vnode")
         opts.update(url.query)
 
         return ([], opts)
+
 
 class IngresExecutionContext(DefaultExecutionContext):
     def __init__(self, **kwargs):
@@ -39,5 +44,6 @@ class IngresExecutionContext(DefaultExecutionContext):
 
     def create_cursor(self):
         return self._connection.connection.cursor()
+
 
 dialect = Ingres_ingresdbi
