@@ -8,14 +8,14 @@ For more information about SQLAlchemy see:
 
 The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
-  * SQLAlchemy 1.4.51 and 2.0.27
-  * Actian Data Platform, Ingres 11.x, Vector 5.x, Vector 6.x - via ODBC
+  * SQLAlchemy 1.4.51 and 2.0.30
+  * Actian Data Platform, Ingres 11.x & 12.x, Vector 5.x & 6.x - via ODBC
 
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
 ```
-    python -m pip install 'sqlalchemy < 2.0.27'
+    python -m pip install 'sqlalchemy < 2.0.30'
     python -m pip install sqlalchemy==1.4.51
  ```
  
@@ -250,9 +250,9 @@ Example:
 
 Documentation reference [iiindexes catalog](https://docs.actian.com/actianx/12.0/index.html#page/DatabaseAdmin/Standard_Catalogs_for_All_Databases.htm#ww1029558)
 
-## Known Issues
+## Known Issues and Limitations
 
-Apache Superset issue [27427](https://github.com/apache/superset/issues/27427)  
+### Apache Superset issue [27427](https://github.com/apache/superset/issues/27427)  
 
 The Apache Superset SQL parser is able to recognize and handle row limiting clauses that use keywords **LIMIT** and **TOP** but does not handle the **FETCH FIRST** clause, which is used by some databases, including Ingres and PostgreSQL.  
 
@@ -261,3 +261,24 @@ If a **FETCH FIRST** clause is used in a SQL statement and the Superset config p
 The errant behavior can be seen when working with SQL statements and table metadata in Superset SQL Lab and may occur in other Superset operations as well.  
 
 It is important to note that this is a problem with Apache Superset and not with the SQLAlchemy-Ingres connector.
+
+### Reflection of constraint metadata does not include attributes referential_actions and enforce_option
+
+Actian databases provide optional clauses for specifying _referential_actions_ and _enforce_option_ when defining table-level or column-level constraints.
+
+#### Clauses from [doc](https://docs.actian.com/actianx/12.0/index.html#page/SQLRef/Constraints.htm):
+
+#### referential_actions
+- ON UPDATE CASCADE
+- ON UPDATE {RESTRICT | NO ACTION }
+- ON DELETE CASCADE
+- ON DELETE {RESTRICT | NO ACTION }
+- NO ACTION
+- RESTRICT
+- SET NULL
+
+#### enforce_option
+- NOT ENFORCED
+- ENFORCED
+
+When reflecting objects with constraints that are defined having these optional clauses, the returned metadata does not include information on these attributes.
