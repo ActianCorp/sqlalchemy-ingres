@@ -5,6 +5,7 @@ from sqlalchemy.testing import exclusions
 supported = exclusions.open
 unsupported = exclusions.closed
 
+
 class Requirements(SuiteRequirements):
     @property
     def date_historic(self):
@@ -51,5 +52,3 @@ class Requirements(SuiteRequirements):
     @property
     def temp_table_reflection(self):
         return unsupported()
-
-
