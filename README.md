@@ -8,15 +8,15 @@ For more information about SQLAlchemy see:
 
 The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
-  * SQLAlchemy 1.4.51 and 2.0.30
-  * Actian Data Platform, Ingres 11.x & 12.x, Vector 5.x & 6.x - via ODBC
+  * SQLAlchemy 1.4.54 and 2.0.36
+  * Actian Data Platform, Ingres 11.x & 12.x, Vector 6.x & 7.x - via ODBC
 
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
 ```
-    python -m pip install 'sqlalchemy < 2.0.30'
-    python -m pip install sqlalchemy==1.4.51
+    python -m pip install 'sqlalchemy < 2.0.36'
+    python -m pip install sqlalchemy==1.4.54
  ```
  
 Jython/JDBC support is currently untested, as the current code relies on zxjdbc it is not recommended this be used (see https://hg.sr.ht/~clach04/jyjdbc for as an alternative that includes full Decimal datatype support).
@@ -213,22 +213,6 @@ Setup test config
 
     # local
     ingres_odbc=ingres:///sa
-
-Code change needed to SA:
-
-    diff --git a/test/requirements.py b/test/requirements.py
-    index cf9168f5a..fcc4f37a0 100644
-    --- a/test/requirements.py
-    +++ b/test/requirements.py
-    @@ -394,6 +394,9 @@ class DefaultRequirements(SuiteRequirements):
-             elif against(config, "oracle"):
-                 default = "READ COMMITTED"
-                 levels.add("AUTOCOMMIT")
-    +        elif against(config, "ingres"):
-    +            default = "READ COMMITTED"
-    +            levels.add("AUTOCOMMIT")  # probably needed, not sure what this is though - assuming tests are not commiting and expecting autocommit semantics
-             else:
-                 raise NotImplementedError()
 
 Run (all) tests:
 
