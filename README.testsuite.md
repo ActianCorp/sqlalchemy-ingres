@@ -101,45 +101,45 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 ## Configuration Variations and Impact on Expected Results
 
 There are a variety of ways to execute SQLAlchemy tests with Actian databases.
-This section provides some information to help understand expected results for various configurations.
+This section provides information to help understand expected results for various configurations
 
-This information is current for version 0.0.10 of the Ingres connector for SQLAlchemy.
+The provided information is current for version 0.0.10 of the Ingres connector.
 
 PR [42](https://github.com/ActianCorp/sqlalchemy-ingres/pull/42) contained changes to the SQLAlchemy Ingres connector that included new import statements. These changes broke compatibility with SQLAlchemy 1.4. PR [69](https://github.com/ActianCorp/sqlalchemy-ingres/pull/69) fixed this problem so that the Ingres connector once again works with SQLAlchemy 1.x, retains compatibility with SQLAlchemy 2.x, and is able to run the SQLAlchemy dialect compliance suite and the unit tests for SQLAlchemy versions 1.x and 2.x.
 
 
 ### Requirements Class
 
-An important element in test case behavior is the Ingres connector `Requirements` class defined in requirements.py
- sub-classed from SuiteRequirements found in sqlalchemy.testing.requirements
- and that was added via PR [49](https://github.com/ActianCorp/sqlalchemy-ingres/pull/49).
+An important element in test case behavior is the Ingres connector `Requirements` class that is defined in `requirements.py`
+ and sub-classed from `SuiteRequirements` found in `sqlalchemy.testing.requirements`
+ that was added via PR [49](https://github.com/ActianCorp/sqlalchemy-ingres/pull/49).
  
 The Ingres connector Requirements class allows the SQLAlchemy testing framework to
- better understand the capabilities of the Ingres dialect which in turn provides more accurante results
+ better understand the capabilities of the Ingres dialect which in turn provides more accurate results
  when running the SQLAlchemy dialect compliance suite with Ingres databases.
 
 SQLAlchemy issue [5174](https://github.com/sqlalchemy/sqlalchemy/issues/5174) contains a brief discussion by the SQLAlchemy team on
  whether dialects should each have their own requirements.py.
  The team seemingly decided against that idea and instead has opted to explicitly configure behavior options only for the bundled dialects.
- For example, see [requirements.py](https://github.com/sqlalchemy/sqlalchemy/blob/main/test/requirements.py), which defines behavioral requirements
+ For example, see [requirements.py](https://github.com/sqlalchemy/sqlalchemy/blob/main/test/requirements.py) which defines behavioral requirements
  for `postgresql`, `mysql`, `mariadb`, `sqlite`, `oracle`, and `mssql`.
  e.g.
+
     @property
     def unique_constraints_reflect_as_index(self):
         return only_on(["mysql", "mariadb", "oracle", "postgresql", "mssql"])
 
- This leaves it up to all other dialects to implement their own Requirements class,
- which in fact has been done with the SQLAlchemy dialects for 
- PyAthena, Snowflake, CockroachDB, Firebird, MonetDB, Sybase SQL Anywhere and many others.
+For now, all dialects other than the ones referred to in the SQLAlchemy requirements.py should implement their own Requirements class,
+ which in fact has been done with the SQLAlchemy dialects for PyAthena, Snowflake, CockroachDB, Firebird, MonetDB, Sybase SQL Anywhere and many others.
 
 It is important to understand the impact of using the Ingres connector Requirements class.
 
-Requirements | Enabled | Disabled
---|--|--
-SQLAlchemy 1.4.54<br>Dialect Compliance Suite | Good results | Will not execute due to many<br>NotImplementedError
-SQLAlchemy 1.4.54<br>Unit Tests | Will not execute due to missing requirements | Will not execute due to missing requirements
-SQLAlchemy 2.0.36<br>Dialect Compliance Suite | Good results | Poor pass rate due to many errors
-SQLAlchemy 2.0.36<br>Unit Tests | Will not execute due to missing requirements | Tests execute with good results
+SQLAlchemy Version | Test Suite | Requirements Enabled | Requirements Disabled
+--|--|--|--
+SQLAlchemy 1.4.54 | Dialect Compliance Suite | Good results | Will not execute due to many<br>NotImplementedError
+SQLAlchemy 1.4.54 | Unit Tests | Will not execute due to missing requirements | Will not execute due to missing requirements
+SQLAlchemy 2.0.36 | Dialect Compliance Suite | Good results | Poor pass rate due to many errors
+SQLAlchemy 2.0.36 | Unit Tests | Will not execute due to missing requirements | Tests execute with good results
 
 
 ## Notes about Dialect API Methods
