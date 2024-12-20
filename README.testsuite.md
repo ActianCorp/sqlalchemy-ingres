@@ -1,54 +1,58 @@
 # Introduction
 
-The SQLAlchemy GitHub repository contains two test suites:
+The SQLAlchemy GitHub repository contains two test suites.
 
- - **Dialect Compliance Suite**
-     - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst)
-     - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite)
+**Dialect Compliance Suite**
+ - Recommended as the primary testing suite for third party dialects instead of executing SQLAlchemy's full testing suite.
+ - Found in the source tree at `lib/sqlalchemy/testing/suite`
+ - SQLAlchemy version 2.0.36 contains over 1500 unique tests.
+ - Added to SQLAlchemy version 0.8 in 2012 via commit [568de1e](https://github.com/sqlalchemy/sqlalchemy/blob/568de1ef4941dcf366d81ebb46e122f4a973d15a/README.dialects.rst).
+ - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst)
+ - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite)
 
- - **Unit Tests**
-     - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)
-     - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/test)
+**Unit Tests**
+ - Separate from the dialect compliance suite.
+ - A large portion of these tests do not have dialect-sensitive functionality.
+ - SQLAlchemy version 2.0.36 contains over 30K unique tests.
+ - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)
+ - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/test)
 
-The dialect compliance suite was initially added to SQLAlchemy version 0.8 in 2012 via commit [568de1e](https://github.com/sqlalchemy/sqlalchemy/blob/568de1ef4941dcf366d81ebb46e122f4a973d15a/README.dialects.rst).
+## Test Execution
 
-In order to run the dialect compliance suite, it is necessary that dialects have a `requirements.py`. A `requirements.py` file was added to SQLAlchemy Ingres connector 0.0.7 in May 2024 via PR [49](https://github.com/ActianCorp/sqlalchemy-ingres/pull/49).
-
-The SQLAlchemy unit tests are separate from the dialect compliance suite. The number of tests varies depending on the exact version of SQLAlchemy. For recent releases of SQLAlchemy 2.x, there are over 30K unit tests while the dialect compliance suite contains fewer than 2K tests.
-
-In PR [42](https://github.com/ActianCorp/sqlalchemy-ingres/pull/42), changes were made to the SQLAlchemy Ingres connector that included new import statements. These changes broke compatibility with SQLAlchemy 1.4. PR [69](https://github.com/ActianCorp/sqlalchemy-ingres/pull/69) fixed this problem so that the Ingres connector once again works with SQLAlchemy 1.x, retains compatibility with SQLAlchemy 2.x, and is able to run the SQLAlchemy dialect compliance suite and the unit tests for SQLAlchemy versions 1.x and 2.x.
-
-
-# SQLAlchemy Dialect Compliance Suite
-## Overview and Setup
-
-The following text is from the page [README.dialects.rst](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst) of the SQLAlchemy GitHub repository.
-
-> SQLAlchemy includes a [dialect compliance suite](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite) that is usable by third party libraries, in the source tree at lib/sqlalchemy/testing/suite. There's no need for a third party dialect to run through SQLAlchemy's full testing suite, as a large portion of these tests do not have dialect-sensitive functionality. The "dialect compliance suite" should be viewed as the primary target for new dialects.
-
-### Environment and Packages
-These steps have been tested using the following environment:
+### Example Environment and Packages
+The operations described in this document have been tested in various environments up to and including the following versions:
 
     Microsoft Windows [Version 10.0.19045.4170]
-    Ingres II 11.2.0 (a64.win/100) 15807
-    set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II
     Python 3.10.7
+	
     Packages:
       mock              5.1.0
-      packaging         24.0
-      pip               24.0
+      packaging         24.2
+      pip               24.3.1
       pluggy            1.5.0
-      pyodbc            5.1.0
-      pyproject-api     1.6.1
+      pyodbc            5.2.0
+      pyproject-api     1.8.0
       pypyodbc          1.3.6
-      pytest            8.2.0
+      pytest            8.3.4
       setuptools        63.2.0
-      SQLAlchemy        2.0.29.dev0
-      sqlalchemy-ingres 0.0.7.dev3
-      tox               4.15.0
+      SQLAlchemy        2.0.36.dev0
+      sqlalchemy-ingres 0.0.11.dev0
+      tox               4.23.2
+	  type_extensions   4.12.2
+	  virtualenv        20.28.0
 
-### Configuration
-DSN and directive for using the Ingres Requirements class in requirements.py:
+    Database versions
+      Ingres II 11.2.0 (a64.win/100) 15955
+      Ingres IJ 12.0.0 (a64.win/100) 15963
+      Vector 6.3.0 (a64.lnx/146) 14614
+	  Vector 7.0.0 (a64.lnx/207)
+
+
+### Example Configuration
+
+`set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian IJ`
+
+Config file `test.cfg` containing DSN definition and directive for using the Ingres Requirements class in requirements.py:
 
     [db]
     ingres_odbc=ingres:///sqatestdb
@@ -57,18 +61,117 @@ DSN and directive for using the Ingres Requirements class in requirements.py:
     [sqla_testing]
     requirement_cls=sqlalchemy_ingres.requirements:Requirements
 
-### Execution Example
-The SQLAlchemy [dialect compliance suite](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite) contains many test classes and most of these classes run multiple tests. At the time of this writing, the entire suite contains over 1500 individual tests.
+### Example Commands to Run the SQLAlchemy Tests
 
-This example will run all tests of the class: `DifficultParametersTest`
+pytest documentation:
+ - https://docs.pytest.org/en/stable/
+ - https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html
 
-Contents of file test_suite_area.py:
+Navigate to sqlalchemy directory
 
-    from sqlalchemy.testing.suite import (DifficultParametersTest)
+Assumes `test.cfg` contains defined dsn: `ingres_odbc`
 
-Command to execute tests:
+#### Run all SQLAlchemy tests
 
-    pytest --db ingres_odbc --maxfail=100 test_suite_area.py --tb=no
+    pytest --db ingres_odbc
+
+#### Run Dialect Compliance Suite tests
+
+    pytest --db ingres_odbc .\test\dialect\test_suite.py
+
+#### Run Unit tests
+
+    pytest --db ingres_odbc .\test
+
+#### Sample of helpful pytest arguments (from pytest --help)
+
+    --db=DB           Use prefab database uri.
+    --maxfail=NUM     Exit after first NUM failures or errors
+    -k EXPRESSION     Only run tests which match the given substring expression
+    --tb=style        Traceback print mode (auto/long/short/line/native/no)
+    -v, -vv           Increase verbosity
+    --junit-xml=path  Create junit-xml style report file at given path
+
+
+## Quick Instructions for Test Case Setup and Execution
+
+Windows example of how to set up and run SQLAlchemy tests from the latest default branch.  
+
+The example assumes a local Ingres instance is running and contains a (preferably empty) database called `testdb`.
+
+    C:\test> python -m venv .venv
+    C:\test> .\.venv\Scripts\activate.bat
+    C:\test> python -m pip install --upgrade pip pytest mock tox pyodbc pypyodbc sqlalchemy-ingres
+
+    C:\test> git clone https://github.com/sqlalchemy/sqlalchemy.git
+    C:\test> python -m pip install -e sqlalchemy
+
+    C:\test> cd sqlalchemy
+
+    C:\test\sqlalchemy> cat test.cfg   (Need to have first created this file using your favorite editor)
+    [db]
+    ingres_odbc=ingres:///testdb
+	
+    [sqla_testing]
+	#See later discussion about the impact of using Requirements
+    #requirement_cls=sqlalchemy_ingres.requirements:Requirements	
+
+    C:\test\sqlalchemy> set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II   (Use appropriate ODBC driver)
+
+### Execute all SQLAlchemy tests
+
+    C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc
+
+### Execute SQLAlchemy Dialect Compliance Suite tests
+
+    C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc .\test\dialect\test_suite.py
+
+### Execute SQLAlchemy Unit tests
+
+    C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc .\test
+## Configuration Variations and Impact on Expected Results
+
+There are a variety of ways to execute SQLAlchemy tests with Actian databases.
+This section provides some information to help understand expected results for various configurations.
+
+This information is current for version 0.0.10 of the Ingres connector for SQLAlchemy.
+
+PR [42](https://github.com/ActianCorp/sqlalchemy-ingres/pull/42) contained changes to the SQLAlchemy Ingres connector that included new import statements. These changes broke compatibility with SQLAlchemy 1.4. PR [69](https://github.com/ActianCorp/sqlalchemy-ingres/pull/69) fixed this problem so that the Ingres connector once again works with SQLAlchemy 1.x, retains compatibility with SQLAlchemy 2.x, and is able to run the SQLAlchemy dialect compliance suite and the unit tests for SQLAlchemy versions 1.x and 2.x.
+
+
+### Requirements Class
+
+An important element in test case behavior is the Ingres connect `Requirements` class defined in requirements.py
+ sub-classed from SuiteRequirements found in sqlalchemy.testing.requirements
+ and that was added via PR [49](https://github.com/ActianCorp/sqlalchemy-ingres/pull/49).
+ 
+The Ingres connector Requirements class allows the SQLAlchemy testing framework to
+ better understand the capabilities of the Ingres dialect which in turn provides more accurante results
+ when running the SQLAlchemy dialect compliance suite with Ingres databases.
+
+SQLAlchemy issue [5174](https://github.com/sqlalchemy/sqlalchemy/issues/5174) contains a brief discussion by the SQLAlchemy team on
+ whether dialects should each have their own requirements.py.
+ The team seemingly decided against that idea and instead has opted to explicitly configure behavior options only for the bundled dialects.
+ For example, see [requirements.py](https://github.com/sqlalchemy/sqlalchemy/blob/main/test/requirements.py), which defines behavioral requirements
+ for `postgresql`, `mysql`, `mariadb`, `sqlite`, `oracle`, and `mssql`.
+ e.g.
+    @property
+    def unique_constraints_reflect_as_index(self):
+        return only_on(["mysql", "mariadb", "oracle", "postgresql", "mssql"])
+
+ This leaves it up to all other dialects to implement their own Requirements class,
+ which in fact has been done with the SQLAlchemy dialects for 
+ PyAthena, Snowflake, CockroachDB, Firebird, MonetDB, Sybase SQL Anywhere and many others.
+
+It is important to understand the impact of using the Ingres connector Requirements class.
+
+Requirements | Enabled | Disabled
+--|--|--
+SQLAlchemy 1.4.54<br>Dialect Compliance Suite | Good results | Will not execute due to many<br>NotImplementedError
+SQLAlchemy 1.4.54<br>Unit Tests | Will not execute due to missing requirements | Will not execute due to missing requirements
+SQLAlchemy 2.0.36<br>Dialect Compliance Suite | Good results | Poor pass rate due to many errors
+SQLAlchemy 2.0.36<br>Unit Tests | Will not execute due to missing requirements | Tests execute with good results
+
 
 ## Notes about Dialect API Methods
 
@@ -84,11 +187,12 @@ Example of constraint data returned from **IngresDialect::get_unique_constraints
       {'name': 'zz_dingalings_multiple', 'column_names': ['address_id', 'dingaling_id']},
       {'name': 'user_tmp_uq_main', 'column_names': ['name']} ]
 
+
 ## Known Issues
 
 ### Use of Alternate Schemas
 
-When running the SQLAlchemy [dialect compliance suite](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite), quite a few tests would fail with some form of the following error:
+When running the SQLAlchemy [dialect compliance suite](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite), quite a few tests fail with some form of the following error:
 
     sqlalchemy.exc.ProgrammingError: (pyodbc.ProgrammingError)
     ('42503', "[42503] [Actian][Actian II ODBC Driver][INGRES]
@@ -115,7 +219,7 @@ The following text about alternate schemas is taken from these SQLAlchemy GitHub
 > Added a new flag to .DefaultDialect called supports_schemas; third party dialects may set this flag to False to disable SQLAlchemy's schema-level tests when running the test suite for a > third party dialect.
 
 #### Flag added to the Ingres Dialect
-Per discussion in [11366](https://github.com/sqlalchemy/sqlalchemy/discussions/11366) and additional research in internal ticket [II-14148](https://actian.atlassian.net/browse/II-14148), the setting `supports_schemas = False` will be added to the IngresDialect class via PR [50](https://github.com/ActianCorp/sqlalchemy-ingres/pull/50) so that when the dialect compliance suite is executed, any tests that use alternate schemas will be skipped.
+Per discussion in [11366](https://github.com/sqlalchemy/sqlalchemy/discussions/11366) and additional research in internal ticket [II-14148](https://actian.atlassian.net/browse/II-14148), the setting `supports_schemas = False` was added to the IngresDialect class via PR [50](https://github.com/ActianCorp/sqlalchemy-ingres/pull/50) so that when the dialect compliance suite is executed, any tests that use alternate schemas will be skipped.
 
 Example comparison of results before and after adding the setting `supports_schemas = False`
 
@@ -153,40 +257,40 @@ Code example from [test_select.py](https://github.com/sqlalchemy/sqlalchemy/blob
         s2 = select(table).where(table.c.id == 3).limit(1).order_by(table.c.id)
         u1 = union(s1, s2).alias()
 
-The SQLAlchemy class method `SQLCompiler::order_by_clause` allows dialects to customize how ORDER BY is rendered for SQL statements. In theory, one could override this method via `IngresSQLCompiler::order_by_clause` to avoid adding the ORDER BY clause to SELECT statements that are subqueries. However, for this method override to be viable, it would also need to know whether the current subquery is involved in a UNION clause, which might not be easy or even possible.
+The SQLAlchemy class method `SQLCompiler::order_by_clause` allows dialects to customize how ORDER BY is rendered for SQL statements.
+ In theory, one could override this method via `IngresSQLCompiler::order_by_clause` to avoid adding the ORDER BY clause to SELECT statements that are subqueries.
+ However, for this method override to be viable, it would also need to know whether the current subquery is involved in a UNION clause, which might not be easy or even possible.
 
-In addition, we probably don't want the Ingres dialect to forcibly exclude the ORDER BY clause from the SQL statement when the application code explicitly specifies using an ORDER BY for a SELECT statement that will be involved in a UNION clause.
+In addition, we probably don't want the Ingres dialect to forcibly exclude the ORDER BY clause from the SQL statement
+ when the application code explicitly specifies using an ORDER BY for a SELECT statement that will be involved in a UNION clause.
 
-Therefore, the proper behavior should probably be what occurs already against Ingres, which is a syntax error informing the user that the ORDER BY clause is not allowed for a SELECT statement involved in a UNION clause.
+Therefore, the proper behavior should probably be what occurs already against Ingres, which is a syntax error informing the user
+ that the ORDER BY clause is not allowed for a SELECT statement involved in a UNION clause.
 
 Internal issue [II-14232](https://actian.atlassian.net/browse/II-14232)
 
+### Self-Referencing Referential Constraints
 
-# SQLAlchemy Unit Tests
+ The following example error occurs when trying to execute CREATE TABLE statements using self-referencing referential constraints against Vector:
 
-The SQLAlchemy unit tests are found in this [folder](https://github.com/sqlalchemy/sqlalchemy/tree/main/test).
+    pyodbc.Error: ('50000', "[50000] [Actian][Actian AC ODBC Driver][INGRES]CREATE/ALTER TABLE:
+    You cannot create a self referencing referential constraint on table 'node' in schema 'actian'
+    because it is an X100 table. (328949) (SQLExecDirectW)")
 
-Instructions for running the unit tests are [here](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst).
+This is mostly because the test suite tries to create a number of tables that use self-referencing referential constraints,
+ which are allowed with Ingres, but not allowed with X100 (i.e. Vector) tables.
 
-## Quick Instructions for Windows
+In addition, there are a large number of SQLAlchemy tests that attempt to use the missing tables which leads to additional failures/errors when trying to run these tests.
 
-Example of how to set up and run the full unit tests of the latest SQLAlchemy default branch.
-The example assumes a local Ingres instance is running and contains a database called `testdb`.
+### Unique Constraints and Null Values
 
-    C:\test> python -m venv .venv
-    C:\test> .\.venv\Scripts\activate.bat
-    C:\test> python -m pip install --upgrade pip pytest mock tox pyodbc pypyodbc sqlalchemy-ingres
+The SQLAlchemy `get_multi_columns` tests expect that null values are allowed for any column that is part of a unique constraint.
 
-    C:\test> git clone https://github.com/sqlalchemy/sqlalchemy.git
-    C:\test> python -m pip install -e sqlalchemy
+Ingres tables do _not_ allow columns that are specified as UNIQUE to contains nulls.
+ See https://docs.actian.com/actianx/12.0/index.html#page/SQLRef/Constraints.htm#ww124554
+ Thus, several SQLAlchemy `get_multi_columns` inspection tests will fail even though the results returned by the dialect are correct.
 
-    C:\test> cd sqlalchemy
-
-    C:\test\sqlalchemy> cat test.cfg   (Need to have first created this file using your favorite editor)
-    [db]
-    ingres_odbc=ingres:///testdb
-
-    C:\test\sqlalchemy> set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II   (Use appropriate ODBC driver)
-
-    C:\test\sqlalchemy> pytest --maxfail=100 --db ingres_odbc .\test
+It is worth noting that X100 tables _do_ allow columns specified as unique to contain null values.
+ Similarly, other third party databases such as PostgreSQL also allow column members of unique constraints to be null.
+ See https://www.postgresql.org/docs/16/sql-createtable.html
 
