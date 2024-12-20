@@ -47,43 +47,7 @@ The operations described in this document have been tested in various environmen
       Vector 6.3.0 (a64.lnx/146) 14614
 	  Vector 7.0.0 (a64.lnx/207)
 
-
-### Example Configuration
-
-`set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian IJ`
-
-Config file `test.cfg` containing DSN definition and directive for using the Ingres Requirements class in requirements.py:
-
-    [db]
-    ingres_odbc=ingres:///sqatestdb
-    # ingres_odbc=ingres://testuid:testpwd@testhost:21064/testdb
-
-    [sqla_testing]
-    requirement_cls=sqlalchemy_ingres.requirements:Requirements
-
-### Example Commands to Run the SQLAlchemy Tests
-
-pytest documentation:
- - https://docs.pytest.org/en/stable/
- - https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html
-
-Navigate to sqlalchemy directory
-
-Assumes `test.cfg` contains defined dsn: `ingres_odbc`
-
-#### Run all SQLAlchemy tests
-
-    pytest --db ingres_odbc
-
-#### Run Dialect Compliance Suite tests
-
-    pytest --db ingres_odbc .\test\dialect\test_suite.py
-
-#### Run Unit tests
-
-    pytest --db ingres_odbc .\test
-
-#### Sample of helpful pytest arguments (from pytest --help)
+### Sample of helpful pytest arguments (from pytest --help)
 
     --db=DB           Use prefab database uri.
     --maxfail=NUM     Exit after first NUM failures or errors
@@ -91,6 +55,10 @@ Assumes `test.cfg` contains defined dsn: `ingres_odbc`
     --tb=style        Traceback print mode (auto/long/short/line/native/no)
     -v, -vv           Increase verbosity
     --junit-xml=path  Create junit-xml style report file at given path
+
+#### pytest documentation
+ - https://docs.pytest.org/en/stable/
+ - https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html
 
 
 ## Quick Instructions for Test Case Setup and Execution
@@ -108,9 +76,10 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 
     C:\test> cd sqlalchemy
 
-    C:\test\sqlalchemy> cat test.cfg   (Need to have first created this file using your favorite editor)
+    C:\test\sqlalchemy> cat test.cfg   (Need to create this file using your favorite editor)
     [db]
     ingres_odbc=ingres:///testdb
+    # ingres_odbc=ingres://testuid:testpwd@testhost:21064/testdb
 	
     [sqla_testing]
 	#See later discussion about the impact of using Requirements
@@ -141,7 +110,7 @@ PR [42](https://github.com/ActianCorp/sqlalchemy-ingres/pull/42) contained chang
 
 ### Requirements Class
 
-An important element in test case behavior is the Ingres connect `Requirements` class defined in requirements.py
+An important element in test case behavior is the Ingres connector `Requirements` class defined in requirements.py
  sub-classed from SuiteRequirements found in sqlalchemy.testing.requirements
  and that was added via PR [49](https://github.com/ActianCorp/sqlalchemy-ingres/pull/49).
  
