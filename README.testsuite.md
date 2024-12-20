@@ -134,12 +134,12 @@ For now, all dialects other than the ones referred to in the SQLAlchemy requirem
 
 It is important to understand the impact of using the Ingres connector Requirements class.
 
-SQLAlchemy Version | Test Suite | Requirements Enabled | Requirements Disabled
+SQLAlchemy<br>Version | Test Suite | Requirements<br>Enabled | Requirements<br>Disabled
 --|--|--|--
-SQLAlchemy 1.4.54 | Dialect Compliance Suite | Good results | Will not execute due to many<br>NotImplementedError
-SQLAlchemy 1.4.54 | Unit Tests | Will not execute due to missing requirements | Will not execute due to missing requirements
-SQLAlchemy 2.0.36 | Dialect Compliance Suite | Good results | Poor pass rate due to many errors
-SQLAlchemy 2.0.36 | Unit Tests | Will not execute due to missing requirements | Tests execute with good results
+1.4.54 | Dialect Compliance Suite | Good results | Will not execute due to many<br>NotImplementedError
+1.4.54 | Unit Tests | Will not execute due to missing requirements | Will not execute due to missing requirements
+2.0.36 | Dialect Compliance Suite | Good results | Poor pass rate due to many errors
+2.0.36 | Unit Tests | Will not execute due to missing requirements | Tests execute with good results
 
 
 ## Notes about Dialect API Methods
