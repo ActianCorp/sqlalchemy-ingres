@@ -8,7 +8,7 @@
 - [Configuration Variations and Impact on Expected Results](#configuration-variations-and-impact-on-expected-results)
   * [Requirements Class](#requirements-class)
 - [Notes about Dialect API Methods](#notes-about-dialect-api-methods)
-  * [get_unique_constraints()](#get_unique_constraints())
+  * [get_unique_constraints](#get_unique_constraints)
 - [Known Issues](#known-issues)
   * [Use of Alternate Schemas](#use-of-alternate-schemas)
   * [UNION clauses involving SELECT statements containing individual ORDER BY clauses](#union-clauses-involving-select-statements-containing-individual-order-by-clauses)
@@ -180,7 +180,7 @@ SQLAlchemy<br>Version | Test Suite | Requirements<br>Enabled | Requirements<br>D
 
 ## Notes about Dialect API Methods
 
-### get_unique_constraints()
+### get_unique_constraints
 
 Method **IngresDialect::get_unique_constraints** returns a list of dictionaries, with each dictionary key containing the constraint name and each dictionary value containing a list of the constraint column(s).
 
