@@ -194,30 +194,6 @@ Getting error:
     import os; os.environ['SQLALCHEMY_INGRES_ODBC_DRIVER_NAME'] = 'Ingres X2'  # Etc. where X2 is the installation id (output from, "ingprenv II_INSTALLATION")
     ```
 
-### Running SA test suite
-
-NOTE below is for Python 2.7 and 3.4, can remove version pin for current python. Mock appears to be a dependency that is not pulled in for py2.7
-
-    python -m pip  install --upgrade pip
-    python -m pip  install tox "pytest==4.6"
-    python -m pip  install mock
-
-Setup test config
-
-    $ cat test.cfg
-    # test.cfg file
-    # see README.unittests.rst
-    #       pytest --db sqlite_file
-    [db]
-    sqlite_file=sqlite:///querytest.sqlite3
-
-    # local
-    ingres_odbc=ingres:///sa
-
-Run (all) tests:
-
-    pytest --db ingres_odbc --junit-xml=all_results_junit.xml --maxfail=12000
-
 ## Execution Options
 
 ### Index Reflection

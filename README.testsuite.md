@@ -1,67 +1,48 @@
 # Introduction
 
-The SQLAlchemy GitHub repository contains two test suites.
+The SQLAlchemy GitHub repository contains two test suites:
 
-**Dialect Compliance Suite**
- - Recommended as the primary testing suite for third party dialects instead of executing SQLAlchemy's full testing suite.
- - Found in the source tree at `lib/sqlalchemy/testing/suite`
- - SQLAlchemy version 2.0.36 contains over 1500 unique tests.
- - Added to SQLAlchemy version 0.8 in 2012 via commit [568de1e](https://github.com/sqlalchemy/sqlalchemy/blob/568de1ef4941dcf366d81ebb46e122f4a973d15a/README.dialects.rst).
- - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst)
- - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite)
+1. **Dialect Compliance Suite**
 
-**Unit Tests**
- - Separate from the dialect compliance suite.
- - A large portion of these tests do not have dialect-sensitive functionality.
- - SQLAlchemy version 2.0.36 contains over 30K unique tests.
- - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)
- - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/test)
+    - Recommended as the primary testing suite for third party dialects instead of executing SQLAlchemy's full testing suite.  
+    - Found in the source tree at `lib/sqlalchemy/testing/suite`  
+    - SQLAlchemy version 2.0.36 contains over 1500 unique tests.  
+    - Added to SQLAlchemy version 0.8 in 2012 via commit [568de1e](https://github.com/sqlalchemy/sqlalchemy/blob/568de1ef4941dcf366d81ebb46e122f4a973d15a/README.dialects.rst).  
+    - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst)  
+    - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite)  
+
+2. **Unit Tests**
+
+    - Separate from the dialect compliance suite.  
+    - A large portion of these tests do not have dialect-sensitive functionality.  
+    - SQLAlchemy version 2.0.36 contains over 30K unique tests.  
+    - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)  
+    - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/test)  
 
 ## Test Execution
 
-### Example Environment and Packages
-The operations described in this document have been tested in various environments up to and including the following versions:
+### Environment
 
-    Microsoft Windows [Version 10.0.19045.4170]
-    Python 3.10.7
-	
-    Packages:
-      mock              5.1.0
-      packaging         24.2
-      pip               24.3.1
-      pluggy            1.5.0
-      pyodbc            5.2.0
-      pyproject-api     1.8.0
-      pypyodbc          1.3.6
-      pytest            8.3.4
-      setuptools        63.2.0
-      SQLAlchemy        2.0.36.dev0
-      sqlalchemy-ingres 0.0.11.dev0
-      tox               4.23.2
-	  type_extensions   4.12.2
-	  virtualenv        20.28.0
+The test suite operations described in this document have been tested in various environments including the following:
 
-    Database versions
-      Ingres II 11.2.0 (a64.win/100) 15955
-      Ingres IJ 12.0.0 (a64.win/100) 15963
-      Vector 6.3.0 (a64.lnx/146) 14614
-	  Vector 7.0.0 (a64.lnx/207)
+**Client:**
 
-### Sample of helpful pytest arguments (from pytest --help)
+      Microsoft Windows version 10
+      Python 3.10.x
+      Python virtual environment
+      Python packages including: mock, tox, pytest, pyodbc
+      SQLAlchemy 1.x, 2.x
+      SQLAlchemy-Ingres connector
 
-    --db=DB           Use prefab database uri.
-    --maxfail=NUM     Exit after first NUM failures or errors
-    -k EXPRESSION     Only run tests which match the given substring expression
-    --tb=style        Traceback print mode (auto/long/short/line/native/no)
-    -v, -vv           Increase verbosity
-    --junit-xml=path  Create junit-xml style report file at given path
+Note that older versions of Python (e.g. 2.7 and 3.4) might require an older version of pytest. 
+If needed, the package version can be specified: `python -m pip install "pytest==4.6"`
 
-#### pytest documentation
- - https://docs.pytest.org/en/stable/
- - https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html
+**Databases:**
 
+      Ingres 11.x, 12.x on Windows
+      Vector 6.x and 7.x on Ubuntu
 
-## Quick Instructions for Test Case Setup and Execution
+### Quick Instructions for Test Case Setup and Execution
 
 Windows example of how to set up and run SQLAlchemy tests from the latest default branch.  
 
@@ -76,28 +57,64 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 
     C:\test> cd sqlalchemy
 
-    C:\test\sqlalchemy> cat test.cfg   (Need to create this file using your favorite editor)
+    C:\test\sqlalchemy> cat test.cfg   (Create this file using your favorite editor)
     [db]
     ingres_odbc=ingres:///testdb
-    # ingres_odbc=ingres://testuid:testpwd@testhost:21064/testdb
-	
+
+    # Other uri examples
+    alt_ingres_odbc=ingres://uid123:pwd123@testhost:21064/testdb
+    postgres_dbapi=postgresql+psycopg2://postgres:pwd123@localhost/testdb
+    sqlite_mem=sqlite:///:memory:
+    sqlite_file=sqlite:///querytest.sqlite3
+
     [sqla_testing]
 	#See later discussion about the impact of using Requirements
     #requirement_cls=sqlalchemy_ingres.requirements:Requirements	
 
     C:\test\sqlalchemy> set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II   (Use appropriate ODBC driver)
 
-### Execute all SQLAlchemy tests
+#### Code changes needed if using SQLAlchemy 1.x. Does not apply to SQLAlchemy 2.x.
+
+    diff --git a/test/requirements.py b/test/requirements.py
+    index cf9168f5a..fcc4f37a0 100644
+    --- a/test/requirements.py
+    +++ b/test/requirements.py
+    @@ -394,6 +394,9 @@ class DefaultRequirements(SuiteRequirements):
+             elif against(config, "oracle"):
+                 default = "READ COMMITTED"
+                 levels.add("AUTOCOMMIT")
+    +        elif against(config, "ingres"):
+    +            default = "READ COMMITTED"
+    +            levels.add("AUTOCOMMIT")  # probably needed, not sure what this is though - assuming tests are not commiting and expecting autocommit semantics
+             else:
+                 raise NotImplementedError()
+
+#### Execute all SQLAlchemy tests
 
     C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc
 
-### Execute SQLAlchemy Dialect Compliance Suite tests
+#### Execute SQLAlchemy Dialect Compliance Suite tests
 
     C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc .\test\dialect\test_suite.py
 
-### Execute SQLAlchemy Unit tests
+#### Execute SQLAlchemy Unit tests
 
     C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc .\test
+
+### Helpful pytest documentation links:
+ - [https://docs.pytest.org/en/stable/](https://docs.pytest.org/en/stable/)
+ - [https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html](https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html)
+
+#### Sample of pytest arguments (from pytest --help)
+
+    --db=DB           Use prefab database uri.
+    --maxfail=NUM     Exit after first NUM failures or errors
+    -k EXPRESSION     Only run tests which match the given substring expression
+    --tb=style        Traceback print mode (auto/long/short/line/native/no)
+    -v, -vv           Increase verbosity
+    --junit-xml=path  Create junit-xml style report file at given path
+
+
 ## Configuration Variations and Impact on Expected Results
 
 There are a variety of ways to execute SQLAlchemy tests with Actian databases.
