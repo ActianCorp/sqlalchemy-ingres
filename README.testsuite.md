@@ -12,7 +12,7 @@
 - [Known Issues](#known-issues)
   * [Use of Alternate Schemas](#use-of-alternate-schemas)
   * [UNION clauses involving SELECT statements containing individual ORDER BY clauses](#union-clauses-involving-select-statements-containing-individual-order-by-clauses)
-  * [Self-Referencing Referential Constraints](#self--referencing-referential-constraints)
+  * [Self-Referencing Referential Constraints](#self-referencing-referential-constraints)
   * [Unique Constraints and Null Values](#unique-constraints-and-null-values)
 
 --------------------------------------------------------
