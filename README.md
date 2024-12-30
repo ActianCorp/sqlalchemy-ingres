@@ -38,7 +38,6 @@ Known to work with:
 - [Development instructions](#development-instructions)
   * [Quick python test](#quick-python-test)
   * [Troubleshooting](#troubleshooting)
-  * [Running SA test suite](#running-sa-test-suite)
 
 --------------------------------------------------------
 

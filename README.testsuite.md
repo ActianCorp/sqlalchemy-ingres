@@ -1,4 +1,23 @@
-# Introduction
+# Table of Contents
+
+- [Introduction](#introduction)
+- [Test Execution](#test-execution)
+  * [Environment](#environment)
+  * [Quick Instructions for Test Case Setup and Execution](#quick-instructions-for-test-case-setup-and-execution)
+  * [Helpful pytest documentation links](#helpful-pytest-documentation-links)
+- [Configuration Variations and Impact on Expected Results](#configuration-variations-and-impact-on-expected-results)
+  * [Requirements Class](#requirements-class)
+- [Notes about Dialect API Methods](#notes-about-dialect-api-methods)
+  * [get_unique_constraints()](#get_unique_constraints())
+- [Known Issues](#known-issues)
+  * [Use of Alternate Schemas](#use-of-alternate-schemas)
+  * [UNION clauses involving SELECT statements containing individual ORDER BY clauses](#union-clauses-involving-select-statements-containing-individual-order-by-clauses)
+  * [Self-Referencing Referential Constraints](#self--referencing-referential-constraints)
+  * [Unique Constraints and Null Values](#unique-constraints-and-null-values)
+
+--------------------------------------------------------
+
+## Introduction
 
 The SQLAlchemy GitHub repository contains two test suites:
 
@@ -35,7 +54,7 @@ The test suite operations described in this document have been tested in various
       SQLAlchemy-Ingres connector
 
 Note that older versions of Python (e.g. 2.7 and 3.4) might require an older version of pytest. 
-If needed, the package version can be specified: `python -m pip install "pytest==4.6"`
+If needed, the package version can be specified. For example: `python -m pip install "pytest==4.6"`
 
 **Databases:**
 
@@ -101,7 +120,7 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 
     C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc .\test
 
-### Helpful pytest documentation links:
+### Helpful pytest documentation links
  - [https://docs.pytest.org/en/stable/](https://docs.pytest.org/en/stable/)
  - [https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html](https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html)
 
