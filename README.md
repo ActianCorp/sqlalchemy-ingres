@@ -8,15 +8,15 @@ For more information about SQLAlchemy see:
 
 The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
-  * SQLAlchemy 1.4.51 and 2.0.30
-  * Actian Data Platform, Ingres 11.x & 12.x, Vector 5.x & 6.x - via ODBC
+  * SQLAlchemy 1.4.x and 2.0.x
+  * Actian Data Platform, Ingres 11.x & 12.x, Vector 6.x & 7.x - via ODBC
 
 
 It is important to be aware of which version of SQLAlchemy is installed. Version pinning provides the ability to install the desired version explicitly.
 Version pinning examples:
 ```
-    python -m pip install 'sqlalchemy < 2.0.30'
-    python -m pip install sqlalchemy==1.4.51
+    python -m pip install 'sqlalchemy < 2.0.36'
+    python -m pip install sqlalchemy==1.4.54
  ```
  
 Jython/JDBC support is currently untested, as the current code relies on zxjdbc it is not recommended this be used (see https://hg.sr.ht/~clach04/jyjdbc for as an alternative that includes full Decimal datatype support).
@@ -26,7 +26,7 @@ Known to work with:
   * https://github.com/cloudera/hue
   * https://github.com/apache/superset (see https://github.com/clach04/incubator-superset/tree/vector)
   * https://github.com/catherinedevlin/ipython-sql / Jupyter/IPython notebooks (see https://github.com/catherinedevlin/ipython-sql/pull/196 - or use `%config SqlMagic.autocommit=False`
-      * Until ipython-sql 0.4.1 is released, to avoid workaround issue; `pip install git+https://github.com/catherinedevlin/ipython-sql.git`
+      * If using ipython-sql prior to version 0.4.1, to avoid workaround issue; `pip install git+https://github.com/catherinedevlin/ipython-sql.git`
   * https://github.com/wireservice/csvkit (see https://github.com/wireservice/agate-sql/pull/36)
 
 --------------------------------------------------------
@@ -38,7 +38,6 @@ Known to work with:
 - [Development instructions](#development-instructions)
   * [Quick python test](#quick-python-test)
   * [Troubleshooting](#troubleshooting)
-  * [Running SA test suite](#running-sa-test-suite)
 
 --------------------------------------------------------
 
@@ -183,56 +182,28 @@ for row in connection.execute(sqlalchemy.text(query)):
 
 ### Troubleshooting
 
-Getting error:
+If experiencing this error:
 
-    sqlalchemy.exc.DatabaseError: (pypyodbc.DatabaseError) ('08004', '[08004] [Actian][Ingres ODBC Driver][INGRES]Requested association partner is unavailable')
+    sqlalchemy.exc.DatabaseError: (pypyodbc.DatabaseError)
+    ('08004', '[08004] [Actian][Ingres ODBC Driver][INGRES]Requested association partner is unavailable')
 
 1. DBMS may not be running or accesible (e.g. network error).
 2. Could be using a Driver name that is not available (or the wrong number of bits, e.g. 32-bit versus 64-bit or vice-versa), or wrong environment (e.g. multiple DBMS/client installations). Solution, make use of environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME` either in the environment or in Python code, e.g:
 
     ```python
-    import os; os.environ['SQLALCHEMY_INGRES_ODBC_DRIVER_NAME'] = 'Ingres X2'  # Etc. where X2 is the installation id (output from, "ingprenv II_INSTALLATION")
+    import os; os.environ['SQLALCHEMY_INGRES_ODBC_DRIVER_NAME'] = 'Ingres X2'
+    # Etc. where X2 is the installation id (output from, "ingprenv II_INSTALLATION")
     ```
 
-### Running SA test suite
+If experiencing this error:
 
-NOTE below is for Python 2.7 and 3.4, can remove version pin for current python. Mock appears to be a dependency that is not pulled in for py2.7
+    sqlalchemy.exc.OperationalError: (pyodbc.OperationalError)
+    ('08004', '[08004] [Actian][Actian ODBC Driver][INGRES]
+    A server class was provided as part of the database name (dbname/class),
+    but no server has registered the requested server class. (786742) (SQLDriverConnect);
+    [08004] [Actian][Actian ODBC Driver][INGRES]The connection to the server has been aborted. (13172737)')
 
-    python -m pip  install --upgrade pip
-    python -m pip  install tox "pytest==4.6"
-    python -m pip  install mock
-
-Setup test config
-
-    $ cat test.cfg
-    # test.cfg file
-    # see README.unittests.rst
-    #       pytest --db sqlite_file
-    [db]
-    sqlite_file=sqlite:///querytest.sqlite3
-
-    # local
-    ingres_odbc=ingres:///sa
-
-Code change needed to SA:
-
-    diff --git a/test/requirements.py b/test/requirements.py
-    index cf9168f5a..fcc4f37a0 100644
-    --- a/test/requirements.py
-    +++ b/test/requirements.py
-    @@ -394,6 +394,9 @@ class DefaultRequirements(SuiteRequirements):
-             elif against(config, "oracle"):
-                 default = "READ COMMITTED"
-                 levels.add("AUTOCOMMIT")
-    +        elif against(config, "ingres"):
-    +            default = "READ COMMITTED"
-    +            levels.add("AUTOCOMMIT")  # probably needed, not sure what this is though - assuming tests are not commiting and expecting autocommit semantics
-             else:
-                 raise NotImplementedError()
-
-Run (all) tests:
-
-    pytest --db ingres_odbc --junit-xml=all_results_junit.xml --maxfail=12000
+Resolution: Be sure the environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME` is set as previously instructed.
 
 ## Execution Options
 
