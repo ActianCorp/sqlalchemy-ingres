@@ -8,7 +8,7 @@ For more information about SQLAlchemy see:
 
 The Ingres dialect was originally developed to work with SQLAlchemy versions 0.6 and Ingres 9.2. The current code has recently been thoroughly tested with these versions:
 
-  * SQLAlchemy 1.4.54 and 2.0.36
+  * SQLAlchemy 1.4.x and 2.0.x
   * Actian Data Platform, Ingres 11.x & 12.x, Vector 6.x & 7.x - via ODBC
 
 
@@ -26,7 +26,7 @@ Known to work with:
   * https://github.com/cloudera/hue
   * https://github.com/apache/superset (see https://github.com/clach04/incubator-superset/tree/vector)
   * https://github.com/catherinedevlin/ipython-sql / Jupyter/IPython notebooks (see https://github.com/catherinedevlin/ipython-sql/pull/196 - or use `%config SqlMagic.autocommit=False`
-      * Until ipython-sql 0.4.1 is released, to avoid workaround issue; `pip install git+https://github.com/catherinedevlin/ipython-sql.git`
+      * If using ipython-sql prior to version 0.4.1, to avoid workaround issue; `pip install git+https://github.com/catherinedevlin/ipython-sql.git`
   * https://github.com/wireservice/csvkit (see https://github.com/wireservice/agate-sql/pull/36)
 
 --------------------------------------------------------
@@ -182,16 +182,28 @@ for row in connection.execute(sqlalchemy.text(query)):
 
 ### Troubleshooting
 
-Getting error:
+If experiencing this error:
 
-    sqlalchemy.exc.DatabaseError: (pypyodbc.DatabaseError) ('08004', '[08004] [Actian][Ingres ODBC Driver][INGRES]Requested association partner is unavailable')
+    sqlalchemy.exc.DatabaseError: (pypyodbc.DatabaseError)
+    ('08004', '[08004] [Actian][Ingres ODBC Driver][INGRES]Requested association partner is unavailable')
 
 1. DBMS may not be running or accesible (e.g. network error).
 2. Could be using a Driver name that is not available (or the wrong number of bits, e.g. 32-bit versus 64-bit or vice-versa), or wrong environment (e.g. multiple DBMS/client installations). Solution, make use of environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME` either in the environment or in Python code, e.g:
 
     ```python
-    import os; os.environ['SQLALCHEMY_INGRES_ODBC_DRIVER_NAME'] = 'Ingres X2'  # Etc. where X2 is the installation id (output from, "ingprenv II_INSTALLATION")
+    import os; os.environ['SQLALCHEMY_INGRES_ODBC_DRIVER_NAME'] = 'Ingres X2'
+    # Etc. where X2 is the installation id (output from, "ingprenv II_INSTALLATION")
     ```
+
+If experiencing this error:
+
+    sqlalchemy.exc.OperationalError: (pyodbc.OperationalError)
+    ('08004', '[08004] [Actian][Actian ODBC Driver][INGRES]
+    A server class was provided as part of the database name (dbname/class),
+    but no server has registered the requested server class. (786742) (SQLDriverConnect);
+    [08004] [Actian][Actian ODBC Driver][INGRES]The connection to the server has been aborted. (13172737)')
+
+Resolution: Be sure the environment variable `SQLALCHEMY_INGRES_ODBC_DRIVER_NAME` is set as previously instructed.
 
 ## Execution Options
 

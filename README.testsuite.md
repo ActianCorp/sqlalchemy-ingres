@@ -1,6 +1,6 @@
 # Table of Contents
 
-- [Introduction](#introduction)
+- [Introduction to the SQLAlchemhy Test Suites](#introduction-to-the-sqlalchemy-test-suites)
 - [Test Execution](#test-execution)
   * [Environment](#environment)
   * [Quick Instructions for Test Case Setup and Execution](#quick-instructions-for-test-case-setup-and-execution)
@@ -17,26 +17,25 @@
 
 --------------------------------------------------------
 
-## Introduction
+## Introduction to the SQLAlchemy Test Suites
 
 The SQLAlchemy GitHub repository contains two test suites:
 
 1. **Dialect Compliance Suite**
 
     - Recommended as the primary testing suite for third party dialects instead of executing SQLAlchemy's full testing suite.  
-    - Found in the source tree at `lib/sqlalchemy/testing/suite`  
     - SQLAlchemy version 2.0.36 contains over 1500 unique tests.  
     - Added to SQLAlchemy version 0.8 in 2012 via commit [568de1e](https://github.com/sqlalchemy/sqlalchemy/blob/568de1ef4941dcf366d81ebb46e122f4a973d15a/README.dialects.rst).  
-    - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst)  
-    - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite)  
+    - Readme: https://github.com/sqlalchemy/sqlalchemy/blob/main/README.dialects.rst  
+    - Location of tests: https://github.com/sqlalchemy/sqlalchemy/tree/main/lib/sqlalchemy/testing/suite  
 
 2. **Unit Tests**
 
     - Separate from the dialect compliance suite.  
     - A large portion of these tests do not have dialect-sensitive functionality.  
     - SQLAlchemy version 2.0.36 contains over 30K unique tests.  
-    - [Readme](https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst)  
-    - [Tests](https://github.com/sqlalchemy/sqlalchemy/tree/main/test)  
+    - Readme: https://github.com/sqlalchemy/sqlalchemy/blob/main/README.unittests.rst  
+    - Location of Tests: https://github.com/sqlalchemy/sqlalchemy/tree/main/test  
 
 ## Test Execution
 
@@ -63,7 +62,7 @@ If needed, the package version can be specified. For example: `python -m pip ins
 
 ### Quick Instructions for Test Case Setup and Execution
 
-Windows example of how to set up and run SQLAlchemy tests from the latest default branch.  
+Windows example to set up and run SQLAlchemy tests from the latest default branch.  
 
 The example assumes a local Ingres instance is running and contains a (preferably empty) database called `testdb`.
 
@@ -92,7 +91,7 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 
     C:\test\sqlalchemy> set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II   (Use appropriate ODBC driver)
 
-#### Code changes needed if using SQLAlchemy 1.x. Does not apply to SQLAlchemy 2.x.
+#### SQLAlchemy code changes needed if using SQLAlchemy 1.x. Does not apply to SQLAlchemy 2.x.
 
     diff --git a/test/requirements.py b/test/requirements.py
     index cf9168f5a..fcc4f37a0 100644
@@ -137,7 +136,7 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 ## Configuration Variations and Impact on Expected Results
 
 There are a variety of ways to execute SQLAlchemy tests with Actian databases.
-This section provides information to help understand expected results for various configurations
+This section provides information to help understand expected results for various configurations.
 
 The provided information is current for version 0.0.10 of the Ingres connector.
 
@@ -158,8 +157,8 @@ SQLAlchemy issue [5174](https://github.com/sqlalchemy/sqlalchemy/issues/5174) co
  whether dialects should each have their own requirements.py.
  The team seemingly decided against that idea and instead has opted to explicitly configure behavior options only for the bundled dialects.
  For example, see [requirements.py](https://github.com/sqlalchemy/sqlalchemy/blob/main/test/requirements.py) which defines behavioral requirements
- for `postgresql`, `mysql`, `mariadb`, `sqlite`, `oracle`, and `mssql`.
- e.g.
+ for `postgresql`, `mysql`, `mariadb`, `sqlite`, `oracle`, and `mssql`.  
+ e.g.  
 
     @property
     def unique_constraints_reflect_as_index(self):
@@ -177,6 +176,11 @@ SQLAlchemy<br>Version | Test Suite | Requirements<br>Enabled | Requirements<br>D
 2.0.36 | Dialect Compliance Suite | Good results | Poor pass rate due to many errors
 2.0.36 | Unit Tests | Will not execute due to missing requirements | Tests execute with good results
 
+The Ingres connector Requirements class is included/enabled by having the following lines present in the file `test.cfg`.
+To disable the Requirements class, simply comment out or remove these lines from `test.cfg`.  
+
+    [sqla_testing]
+    requirement_cls=sqlalchemy_ingres.requirements:Requirements
 
 ## Notes about Dialect API Methods
 
