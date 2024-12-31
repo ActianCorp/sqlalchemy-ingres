@@ -91,7 +91,7 @@ The example assumes a local Ingres instance is running and contains a (preferabl
 
     C:\test\sqlalchemy> set SQLALCHEMY_INGRES_ODBC_DRIVER_NAME=Actian II   (Use appropriate ODBC driver)
 
-#### Code changes needed for SQLAlchemy 1.x unit tests.
+#### Code changes needed for SQLAlchemy 1.x unit tests
 
 The following SQLAlchemy code changes are required only to run the SQLAlchemy 1.x unit tests.
 The code changes are not required with the SQLAlchemy 1.x dialect compliance suite.
