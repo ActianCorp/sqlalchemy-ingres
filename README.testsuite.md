@@ -1,6 +1,6 @@
 # Table of Contents
 
-- [Introduction to the SQLAlchemhy Test Suites](#introduction-to-the-sqlalchemy-test-suites)
+- [Introduction to the SQLAlchemy Test Suites](#introduction-to-the-sqlalchemy-test-suites)
 - [Test Execution](#test-execution)
   * [Environment](#environment)
   * [Quick Instructions for Test Case Setup and Execution](#quick-instructions-for-test-case-setup-and-execution)
