@@ -935,7 +935,7 @@ class IngresDialect(default.DefaultDialect):
         else:
             return name
 
-    def has_table(self, connection, table_name, schema=None):
+    def has_table(self, connection, table_name, schema=None, **kw):
         sqltext = """
             SELECT
                 table_name
