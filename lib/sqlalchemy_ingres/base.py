@@ -959,7 +959,7 @@ class IngresDialect(default.DefaultDialect):
             if rs:
                 rs.close()
 
-    def has_sequence(self, connection, sequence_name, schema=None):
+    def has_sequence(self, connection, sequence_name, schema=None, **kw):
         sqltext = """
             SELECT
                 seq_name
