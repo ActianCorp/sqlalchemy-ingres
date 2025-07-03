@@ -123,6 +123,15 @@ The code changes are not required for any SQLAlchemy 2.x testing (unit or dialec
 
     C:\test\sqlalchemy> pytest --maxfail=10000 --db ingres_odbc .\test
 
+#### Execute a specific set/class of tests
+
+    C:\test\sqlalchemy> pytest --maxfail=50 --db dsn1 .\test\dialect\test_suite.py -k "CompoundSelectTest"
+
+#### Execute a set/class of tests and exclude specific tests within that set
+
+    C:\test\sqlalchemy> pytest --maxfail=50 --db dsn1 .\test\dialect\test_suite.py
+        -k "OrderByLabelTest and not test_composed_int and not test_plain_desc"  
+
 ### Helpful pytest documentation links
  - [https://docs.pytest.org/en/stable/](https://docs.pytest.org/en/stable/)
  - [https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html](https://naveens33.github.io/pytest-tutorial/docs/commandlineoptions.html)
@@ -279,6 +288,13 @@ In addition, we probably don't want the Ingres dialect to forcibly exclude the O
 
 Therefore, the proper behavior should probably be what occurs already against Ingres, which is a syntax error informing the user
  that the ORDER BY clause is not allowed for a SELECT statement involved in a UNION clause.
+
+A workaround is to skip the failing tests using the pytest `-k` option which allows including and excluding specific tests.
+
+    pytest --db ingres_odbc --maxfail=50 .\test\dialect\test_suite.py
+        -k "CompoundSelectTest and not test_limit_offset_in_unions_from_alias
+            and not test_limit_offset_selectable_in_unions
+            and not test_order_by_selectable_in_unions"
 
 Internal issue [II-14232](https://actian.atlassian.net/browse/II-14232)
 
