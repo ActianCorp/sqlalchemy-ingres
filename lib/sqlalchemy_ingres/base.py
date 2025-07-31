@@ -496,7 +496,7 @@ class IngresDialect(default.DefaultDialect):
 
         if schema:
             sqltext += """
-                AND table_owner = ?"""
+                AND object_owner = ?"""
             params = (*params, self.denormalize_name(schema))
 
         rs = None
